@@ -1,4 +1,5 @@
 package Tasks;
+
 import java.util.Objects;
 
 public class Task {
@@ -7,6 +8,19 @@ public class Task {
     protected String description;
     protected String status;
     protected int id;
+
+    public Task(String name, String description, String status, int id) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.id = id;
+    }
+
+    public Task(String name, String description, String status) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+    }
 
     public String getName() {
         return name;
@@ -40,18 +54,6 @@ public class Task {
         this.id = id;
     }
 
-    public Task(String name, String description, String status, int id) {
-        this.name = name;
-        this.description = description;
-        this.status = status;
-        this.id = id;
-    }
-
-    public Task(String name, String description, String status) {
-        this.name = name;
-        this.description = description;
-        this.status = status;
-    }
 
     @Override
     public boolean equals(Object o) {
