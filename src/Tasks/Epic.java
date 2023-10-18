@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class Epic extends Task {
 
-    protected ArrayList<Integer> subtaskId = new ArrayList<>();
+    private ArrayList<Integer> subtaskId = new ArrayList<>();
 
     public Epic(String name, String description, String status, int id) {
         super(name, description, status, id);
@@ -15,9 +15,6 @@ public class Epic extends Task {
         super(name, description, status);
     }
 
-    public boolean isEpic() {
-        return true;
-    }
 
     public void addSubtaskId(int id) {
         subtaskId.add(id);
@@ -28,19 +25,6 @@ public class Epic extends Task {
         return subtaskId;
     }
 
-    @Override
-    public void setStatus(String status) {
-        ArrayList<Integer> sub = getSubtaskId();
-        if (status == null){
-            System.out.println("Сабтакси отсутвуют");
-        } else {
-            this.status = status;
-        }
-    }
-
-    public void setSubtaskId(ArrayList<Integer> subtaskId) {
-        this.subtaskId = subtaskId;
-    }
 
     public void cleanSubtaskId() {
         subtaskId.clear();
