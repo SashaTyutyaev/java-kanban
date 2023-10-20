@@ -140,14 +140,13 @@ public class TaskManager implements ITaskManager {
 
     @Override
     public void deleteEpic(int id) {
-        ArrayList<Integer> sub = getEpic(id).getSubtaskId();
+        ArrayList<Integer> sub = epics.get(id).getSubtaskId();
         for (int i : sub) {
-            if (subtasks.get(i).getEpicId() == epics.get(id).getId()) {
-                subtasks.remove(i);
-                epics.remove(id);
-            }
+            subtasks.remove(i);
         }
+        epics.remove(id);
     }
+
 
     @Override
     public void deleteSubtask(int id) {
