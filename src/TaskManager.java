@@ -74,7 +74,7 @@ public class TaskManager implements ITaskManager {
     @Override
     public Integer addNewSubtask(Subtask subtask) {
         final int id = ++generatorId;
-        Epic epic = epics.get(subtask.getEpicId()) ;
+        Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
             System.out.println("Такой важной задачи нет");
             return -1;
@@ -127,8 +127,8 @@ public class TaskManager implements ITaskManager {
         if (subtasks.containsKey(subtask.getId())) {
             int epicId = subtasks.get(subtask.getId()).getEpicId();
             if (((Integer) subtask.getEpicId()).equals(epicId)) {
-                updateEpicStatus(subtask.getEpicId());
                 subtasks.put(subtask.getId(), subtask);
+                updateEpicStatus(subtask.getEpicId());
             }
         }
     }
@@ -140,9 +140,13 @@ public class TaskManager implements ITaskManager {
 
     @Override
     public void deleteEpic(int id) {
-        epics.remove(id);
-        Epic epic = epics.get(id);
-        epic.removeSubtask(id);
+        ArrayList<Integer> sub = getEpic(id).getSubtaskId();
+        for (int i : sub) {
+            if (subtasks.get(i).getEpicId() == epics.get(id).getId()) {
+                subtasks.remove(i);
+                epics.remove(id);
+            }
+        }
     }
 
     @Override
