@@ -1,8 +1,11 @@
+package Manager;
+
 import Tasks.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public interface ITaskManager {
+public interface TaskManager {
     ArrayList<Task> getTasks();
 
     ArrayList<Subtask> getSubtasks();
@@ -40,5 +43,7 @@ public interface ITaskManager {
     void deleteAllEpics();
 
     void deleteAllSubtasks();
+
+    List<Task> getHistory();
 
 }

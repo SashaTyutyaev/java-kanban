@@ -1,35 +1,43 @@
+package Manager;
+
 import Tasks.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-public class TaskManager implements ITaskManager {
+import static Tasks.TaskStatus.*;
+
+public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
     private int generatorId = 0;
 
     @Override
     public Task getTask(int id) {
+        historyManager.addTask(tasks.get(id));
         return tasks.get(id);
     }
 
     @Override
     public Subtask getSubtask(int id) {
+        historyManager.addTask(subtasks.get(id));
         return subtasks.get(id);
     }
 
     @Override
     public Epic getEpic(int id) {
+        historyManager.addTask(epics.get(id));
         return epics.get(id);
     }
 
 
     @Override
     public ArrayList<Task> getTasks() {
-        return new ArrayList<Task>(tasks.values());
+        return new ArrayList<>(tasks.values());
     }
 
     @Override
@@ -182,36 +190,41 @@ public class TaskManager implements ITaskManager {
         }
     }
 
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
+    }
+
     public void updateEpicStatus(int epicId) {
         if (epics.containsKey(epicId)) {
             Epic epic = epics.get(epicId);
             ArrayList<Integer> sub = epic.getSubtaskId();
             if (sub.isEmpty()) {
-                epic.setStatus("NEW");
+                epic.setStatus(NEW);
                 return;
             }
             int newTask = 0;
             int inProgress = 0;
             int done = 0;
             for (int id : sub) {
-                if (subtasks.get(id).getStatus().equals("DONE")) {
+                if (subtasks.get(id).getStatus().equals(DONE)) {
                     done++;
-                } else if (subtasks.get(id).getStatus().equals("IN_PROGRESS")) {
+                } else if (subtasks.get(id).getStatus().equals(IN_PROGRESS)) {
                     inProgress++;
-                } else if (subtasks.get(id).getStatus().equals("NEW")) {
+                } else if (subtasks.get(id).getStatus().equals(NEW)) {
                     newTask++;
                 }
             }
             if (newTask > 0 && inProgress == 0 && done == 0) {
-                epic.setStatus("NEW");
+                epic.setStatus(NEW);
                 return;
             }
             if (inProgress > 0) {
-                epic.setStatus("IN_PROGRESS");
+                epic.setStatus(IN_PROGRESS);
                 return;
             }
             if (done > 0 && inProgress == 0 && newTask == 0) {
-                epic.setStatus("DONE");
+                epic.setStatus(DONE);
             }
         }
     }
