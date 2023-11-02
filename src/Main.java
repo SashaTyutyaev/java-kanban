@@ -1,8 +1,6 @@
-import Manager.InMemoryHistoryManager;
-import Manager.InMemoryTaskManager;
-import Manager.Managers;
-import Manager.TaskManager;
-import Tasks.*;
+import manager.Managers;
+import manager.TaskManager;
+import tasks.*;
 
 public class Main {
 
@@ -61,6 +59,8 @@ public class Main {
         System.out.println(manager.getTasks());
         System.out.println(manager.getEpics());
         System.out.println(manager.getSubtasks());
+        System.out.println(manager.getEpicSubtasks(epicId1));
+        System.out.println(manager.getEpicSubtasks(epicId2));
 
 
         // Удаление

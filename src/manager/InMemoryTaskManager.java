@@ -1,13 +1,13 @@
-package Manager;
+package manager;
 
-import Tasks.*;
+import tasks.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static Tasks.TaskStatus.*;
+import static tasks.TaskStatus.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -15,6 +15,10 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
     private int generatorId = 0;
+
+    private int getNewIdentificator() {
+        return ++generatorId;
+    }
 
     @Override
     public Task getTask(int id) {
@@ -53,18 +57,14 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public ArrayList<Subtask> getEpicSubtasks(int epicId) {
         ArrayList<Subtask> epicSubtasks = new ArrayList<>();
+        if (!epics.containsKey(epicId)) {
+            return new ArrayList<>();
+        }
         Epic epic = epics.get(epicId);
         ArrayList<Integer> sub = epic.getSubtaskId();
-        if (epics.containsKey(epicId)) {
-            for (int id : sub) {
-                subtasks.get(id);
-                if (!subtasks.isEmpty()) {
-                    for (Map.Entry<Integer, Subtask> entry : subtasks.entrySet()) {
-                        if (entry.getValue().getEpicId() == epicId) {
-                            epicSubtasks.add(entry.getValue());
-                        }
-                    }
-                }
+        for (int id : sub) {
+            if (subtasks.get(id).getEpicId() == epicId) {
+                epicSubtasks.add(subtasks.get(id));
             }
         }
         return epicSubtasks;
@@ -73,7 +73,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewTask(Task task) {
-        final int id = ++generatorId;
+        final int id = getNewIdentificator();
         task.setId(id);
         tasks.put(id, task);
         return id;
@@ -81,7 +81,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Integer addNewSubtask(Subtask subtask) {
-        final int id = ++generatorId;
+        final int id = getNewIdentificator();
         Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
             System.out.println("Такой важной задачи нет");
@@ -98,7 +98,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewEpic(Epic epic) {
-        final int id = ++generatorId;
+        final int id = getNewIdentificator();
         epic.setId(id);
         updateEpicStatus(epic.getId());
         epics.put(id, epic);
