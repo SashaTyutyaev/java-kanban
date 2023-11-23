@@ -76,6 +76,7 @@ public class Main {
         System.out.println(manager.getEpics());
         System.out.println(manager.getSubtasks());
 
+
         System.out.println("ВЫВОД ИСТОРИИ!!!");
         for (Task task : manager.getHistory()) {
             System.out.println(task);
