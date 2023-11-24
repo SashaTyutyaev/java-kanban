@@ -61,6 +61,10 @@ public class Main {
         System.out.println(manager.getSubtasks());
         System.out.println(manager.getEpicSubtasks(epicId1));
         System.out.println(manager.getEpicSubtasks(epicId2));
+        manager.getTask(taskId2);
+        manager.getTask(taskId1);
+        manager.getEpic(epicId2);
+        manager.getSubtask(subtaskId3);
 
 
         // Удаление
