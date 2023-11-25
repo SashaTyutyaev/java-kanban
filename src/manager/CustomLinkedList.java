@@ -25,7 +25,7 @@ public class CustomLinkedList {
     private Node<Task> tail;
     private Node<Task> head;
 
-    private Map<Integer, Node<Task>> nodeMap = new HashMap<>();
+    public Map<Integer, Node<Task>> nodeMap = new HashMap<>();
 
 
     public void linkLast(Task task) {
@@ -50,7 +50,7 @@ public class CustomLinkedList {
         return tasks;
     }
 
-    public void removeNode(Node<Task> node) {
+    private void removeNode(Node<Task> node) {
         if (node.prev == null) {
             head = node.next;
             if (node.next == null) {
@@ -72,10 +72,6 @@ public class CustomLinkedList {
     public void removeTask(Integer key) {
         this.removeNode(nodeMap.get(key));
         this.nodeMap.remove(key);
-    }
-
-    public Map<Integer, Node<Task>> getNodes() {
-        return nodeMap;
     }
 
 }
