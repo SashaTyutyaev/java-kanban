@@ -2,6 +2,7 @@ package manager;
 
 import tasks.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,17 +15,17 @@ public interface TaskManager {
 
     ArrayList<Subtask> getEpicSubtasks(int epicId);
 
-    Task getTask(int id);
+    Task getTask(int id) throws ManagerSaveException, IOException;
 
-    Subtask getSubtask(int id);
+    Subtask getSubtask(int id) throws ManagerSaveException, IOException;
 
-    Epic getEpic(int id);
+    Epic getEpic(int id) throws ManagerSaveException, IOException;
 
-    int addNewTask(Task task);
+    int addNewTask(Task task) throws ManagerSaveException, IOException;
 
-    int addNewEpic(Epic epic);
+    int addNewEpic(Epic epic) throws ManagerSaveException, IOException;
 
-    Integer addNewSubtask(Subtask subtask);
+    Integer addNewSubtask(Subtask subtask) throws ManagerSaveException, IOException;
 
     void updateTask(Task task);
 

@@ -1,13 +1,15 @@
+import manager.ManagerSaveException;
 import manager.Managers;
 import manager.TaskManager;
 import tasks.*;
 
+import java.io.IOException;
+
 public class Main {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ManagerSaveException, IOException {
         TaskManager manager = Managers.getDefault();
-
 
         //Создание
         Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW);
@@ -85,7 +87,6 @@ public class Main {
         for (Task task : manager.getHistory()) {
             System.out.println(task);
         }
-
 
     }
 }

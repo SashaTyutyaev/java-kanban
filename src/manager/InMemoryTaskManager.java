@@ -2,38 +2,38 @@ package manager;
 
 import tasks.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static tasks.TaskStatus.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    public final HashMap<Integer, Task> tasks = new HashMap<>();
+    public final HashMap<Integer, Epic> epics = new HashMap<>();
+    public final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    public final HistoryManager historyManager = Managers.getDefaultHistory();
     private int generatorId = 0;
 
-    private int getNewIdentificator() {
+    public int getNewIdentificator() {
         return ++generatorId;
     }
 
     @Override
-    public Task getTask(int id) {
+    public Task getTask(int id) throws ManagerSaveException, IOException {
         historyManager.add(tasks.get(id));
         return tasks.get(id);
     }
 
     @Override
-    public Subtask getSubtask(int id) {
+    public Subtask getSubtask(int id) throws ManagerSaveException, IOException {
         historyManager.add(subtasks.get(id));
         return subtasks.get(id);
     }
 
     @Override
-    public Epic getEpic(int id) {
+    public Epic getEpic(int id) throws ManagerSaveException, IOException {
         historyManager.add(epics.get(id));
         return epics.get(id);
     }
@@ -72,7 +72,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public int addNewTask(Task task) {
+    public int addNewTask(Task task) throws ManagerSaveException, IOException {
         final int id = getNewIdentificator();
         task.setId(id);
         tasks.put(id, task);
@@ -80,7 +80,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Integer addNewSubtask(Subtask subtask) {
+    public Integer addNewSubtask(Subtask subtask) throws ManagerSaveException, IOException {
         final int id = getNewIdentificator();
         Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
@@ -97,7 +97,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public int addNewEpic(Epic epic) {
+    public int addNewEpic(Epic epic) throws ManagerSaveException, IOException {
         final int id = getNewIdentificator();
         epic.setId(id);
         updateEpicStatus(epic.getId());

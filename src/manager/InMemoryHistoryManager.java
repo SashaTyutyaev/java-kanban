@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    CustomLinkedList customLinkedList = new CustomLinkedList();
+    public CustomLinkedList customLinkedList = new CustomLinkedList();
 
 
     @Override
@@ -29,4 +29,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         customLinkedList.removeTask(id);
 
     }
+
 }

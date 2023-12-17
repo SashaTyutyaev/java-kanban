@@ -42,10 +42,10 @@ public class CustomLinkedList {
 
     public List<Task> getTasks() {
         List<Task> tasks = new ArrayList<>();
-        Node<Task> node = head;
-        while (node.next != null) {
+        Node<Task> node = tail;
+        while (node != null) {
             tasks.add(node.task);
-            node = node.next;
+            node = node.prev;
         }
         return tasks;
     }

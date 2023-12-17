@@ -6,6 +6,12 @@ import java.util.Objects;
 public class Epic extends Task {
 
     private ArrayList<Integer> subtaskId = new ArrayList<>();
+    private TaskType type = TaskType.EPIC;
+
+    @Override
+    public String getType() {
+        return type.toString();
+    }
 
     public Epic(String name, String description, TaskStatus status, int id) {
         super(name, description, status, id);
