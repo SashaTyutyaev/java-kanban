@@ -1,5 +1,6 @@
 package manager;
 
+import managersException.ManagerSaveException;
 import tasks.*;
 
 import java.io.IOException;
@@ -10,10 +11,10 @@ import java.util.List;
 import static tasks.TaskStatus.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    public final HashMap<Integer, Task> tasks = new HashMap<>();
-    public final HashMap<Integer, Epic> epics = new HashMap<>();
-    public final HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    public final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected static final HashMap<Integer, Task> tasks = new HashMap<>();
+    protected static final HashMap<Integer, Epic> epics = new HashMap<>();
+    protected static final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    public static final HistoryManager historyManager = Managers.getDefaultHistory();
     private int generatorId = 0;
 
     public int getNewIdentificator() {
