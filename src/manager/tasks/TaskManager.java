@@ -1,6 +1,6 @@
-package manager;
+package manager.tasks;
 
-import managersException.ManagerSaveException;
+import exceptions.ManagerSaveException;
 import tasks.*;
 
 import java.io.IOException;
@@ -16,17 +16,17 @@ public interface TaskManager {
 
     ArrayList<Subtask> getEpicSubtasks(int epicId);
 
-    Task getTask(int id) throws ManagerSaveException, IOException;
+    Task getTask(int id);
 
-    Subtask getSubtask(int id) throws ManagerSaveException, IOException;
+    Subtask getSubtask(int id);
 
-    Epic getEpic(int id) throws ManagerSaveException, IOException;
+    Epic getEpic(int id);
 
-    int addNewTask(Task task) throws ManagerSaveException, IOException;
+    int addNewTask(Task task);
 
-    int addNewEpic(Epic epic) throws ManagerSaveException, IOException;
+    int addNewEpic(Epic epic);
 
-    Integer addNewSubtask(Subtask subtask) throws ManagerSaveException, IOException;
+    Integer addNewSubtask(Subtask subtask);
 
     void updateTask(Task task);
 

@@ -1,7 +1,12 @@
 package manager;
 
-import fileManager.FileBackedTasksManager;
+import manager.tasks.fileManager.FileBackedTasksManager;
+import manager.history.HistoryManager;
+import manager.history.InMemoryHistoryManager;
+import manager.tasks.memoryManager.InMemoryTaskManager;
+import manager.tasks.TaskManager;
 
+import java.io.File;
 import java.nio.file.Path;
 
 public class Managers {
@@ -18,6 +23,6 @@ public class Managers {
     }
 
     public static FileBackedTasksManager getFileManager() {
-        return new FileBackedTasksManager(Path.of("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
+        return FileBackedTasksManager.loadFromFile(new File("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
     }
 }

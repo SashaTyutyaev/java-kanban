@@ -1,4 +1,4 @@
-package fileManager;
+package elseFunctions;
 
 import tasks.Epic;
 import tasks.Subtask;
@@ -11,17 +11,24 @@ import java.util.List;
 
 public class Converter {
 
-    static String taskToString(Task task) {
-        if (task instanceof Subtask) {
-            return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," +
-                    task.getDescription() + "," + ((Subtask) task).getEpicId();
-        } else {
+    public static String taskToString(Task task) {
             return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," +
                     task.getDescription() + ",";
-        }
+    }
+    public static String taskToString(Epic epic) {
+            return epic.getId() + "," + epic.getType() + "," + epic.getName() + "," + epic.getStatus() + "," +
+                    epic.getDescription() + "," + epic.getSubtaskId();
+    }
+    public static String taskToString(Subtask subtask) {
+            return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + subtask.getStatus() + "," +
+                    subtask.getDescription() + "," + subtask.getEpicId();
     }
 
-    static Task taskFromString(String value) {
+    public static String getTaskType(Task task){
+        return task.getType();
+    }
+
+    public static Task taskFromString(String value) {
         if (value.isBlank()) {
             return null;
         }
@@ -34,7 +41,7 @@ public class Converter {
         return new Task(name, description, status, id);
     }
 
-    static Subtask subFromString(String value) {
+    public static Subtask subFromString(String value) {
         if (value.isBlank()) {
             return null;
         }
@@ -48,7 +55,7 @@ public class Converter {
         return new Subtask(name, description, status, id, epicId);
     }
 
-    static Epic epicFromString(String value) {
+    public static Epic epicFromString(String value) {
         if (value.isBlank()) {
             return null;
         }
@@ -61,7 +68,7 @@ public class Converter {
         return new Epic(name, description, status, id);
     }
 
-    static String historyToString(List<Task> taskList) {
+    public static String historyToString(List<Task> taskList) {
         List<String> historyList = new ArrayList<>();
         for (Task task : taskList) {
             historyList.add(String.valueOf(task.getId()));
@@ -69,7 +76,7 @@ public class Converter {
         return String.join(",", historyList);
     }
 
-    static List<Integer> historyFromString(String value) {
+    public static List<Integer> historyFromString(String value) {
         List<Integer> lines = new LinkedList<>();
         String[] elem = value.split(",");
         for (String line : elem) {
