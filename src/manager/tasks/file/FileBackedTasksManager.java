@@ -1,16 +1,14 @@
-package manager.tasks.fileManager;
+package manager.tasks.file;
 
-import elseFunctions.Converter;
+import converters.Converter;
 import exceptions.ManagerSaveException;
-import manager.Managers;
-import manager.tasks.memoryManager.InMemoryTaskManager;
+import manager.tasks.memory.InMemoryTaskManager;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -22,7 +20,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
     private FileBackedTasksManager(Path path) {
-        super();
         this.path = path;
     }
 
@@ -47,44 +44,56 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
     public static FileBackedTasksManager loadFromFile(File file) {
-        final FileBackedTasksManager fb = new FileBackedTasksManager(Path.of("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
+        final FileBackedTasksManager fb = new FileBackedTasksManager(file.toPath());
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String fileLine = Files.readString(Path.of("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
-            String fileLines[] = fileLine.split("\n");
-            int taskId = Converter.taskFromString(fileLines[fileLines.length - 3]).getId();
             boolean isHistory = false;
-            int initialID = taskId + 1;
             br.readLine();
+            int maxId = 0;
             if (!isHistory) {
                 String line = br.readLine();
-                if (Converter.taskFromString(line).getId() > initialID) {
-                    initialID = Converter.taskFromString(line).getId();
-                    fb.updateIdentificator(initialID);
-                }
-                switch (Converter.getTaskType(Converter.taskFromString(line))) {
-                    case "TASK":
-                        tasks.put(Converter.taskFromString(line).getId(), Converter.taskFromString(line));
-                        break;
-                    case "EPIC":
-                        epics.put(Converter.epicFromString(line).getId(), Converter.epicFromString(line));
-                        break;
-                    case "SUBTASK":
-                        subtasks.put(Converter.subFromString(line).getId(), Converter.subFromString(line));
-                }
                 if (line.isEmpty()) {
-                    br.readLine();
-                    List<Integer> history = Converter.historyFromString(line);
-                    for (Integer id : history) {
-                        if (tasks.containsKey(id)) {
-                            historyManager.add(tasks.get(id));
-                        } else if (subtasks.containsKey(id)) {
-                            historyManager.add(subtasks.get(id));
-                        } else if (epics.containsKey(id)) {
-                            historyManager.add(epics.get(id));
-                        }
+                    isHistory = true;
+                } else {
+                    switch (Converter.getTaskType(line)) {
+                        case TASK:
+                            Task task = Converter.taskFromString(line);
+                            if (task.getId() > maxId) {
+                                maxId = task.getId();
+                            }
+                            tasks.put(task.getId(), task);
+                            break;
+                        case EPIC:
+                            Epic epic = Converter.epicFromString(line);
+                            if (epic.getId() > maxId) {
+                                maxId = epic.getId();
+                            }
+                            epics.put(epic.getId(), epic);
+                            break;
+                        case SUBTASK:
+                            Subtask subtask = Converter.subFromString(line);
+                            if (subtask.getId() > maxId) {
+                                maxId = subtask.getId();
+                            }
+                            subtasks.put(subtask.getId(), subtask);
+                            break;
                     }
-
                 }
+            } else {
+                String line = br.readLine();
+                List<Integer> history = Converter.historyFromString(line);
+                for (Integer id : history) {
+                    if (tasks.containsKey(id)) {
+                        historyManager.add(tasks.get(id));
+                    } else if (subtasks.containsKey(id)) {
+                        historyManager.add(subtasks.get(id));
+                    } else if (epics.containsKey(id)) {
+                        historyManager.add(epics.get(id));
+                    }
+                }
+            }
+            fb.generatorId = maxId + 1;
+            for (Subtask sub : subtasks.values()) {
+                epics.get(sub.getEpicId()).addSubtaskId(sub.getId());
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка с файлом!");
@@ -166,12 +175,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) {
-        FileBackedTasksManager fb = loadFromFile(new File("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
+        final FileBackedTasksManager fb = new FileBackedTasksManager(Path.of("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
         Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW);
         Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS);
         Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS);
-        Task task4 = new Task("Task #4", "Task4 description", TaskStatus.IN_PROGRESS);
-        Task task5 = new Task("Task #5", "Task5 description", TaskStatus.IN_PROGRESS);
         fb.addNewTask(task1);
         fb.getTask(task1.getId());
         fb.addNewTask(task2);
@@ -192,11 +199,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fb.getSubtask(subtask1.getId());
         fb.addNewSubtask(subtask2);
         fb.getSubtask(subtask2.getId());
-        FileBackedTasksManager fb2 = loadFromFile(new File("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
-        fb2.addNewTask(task4);
-        fb2.addNewTask(task5);
-        fb2.addNewEpic(epic3);
-        fb2.addNewSubtask(subtask3);
+        FileBackedTasksManager fb2 = fb.loadFromFile(new File("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
+        Task task4 = new Task("Task #4", "Task4 description", TaskStatus.IN_PROGRESS);
+        Task task5 = new Task("Task #5", "Task5 description", TaskStatus.IN_PROGRESS);
+//        fb2.addNewTask(task4);
+//        fb2.addNewTask(task5);
+//        fb2.addNewEpic(epic3);
+//        fb2.addNewSubtask(subtask3);
+//        fb2.getTask(task4.getId());
         System.out.println(fb2.getTasks());
         System.out.println(fb2.getEpics());
         System.out.println(fb2.getSubtasks());

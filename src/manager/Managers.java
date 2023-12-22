@@ -1,13 +1,12 @@
 package manager;
 
-import manager.tasks.fileManager.FileBackedTasksManager;
 import manager.history.HistoryManager;
 import manager.history.InMemoryHistoryManager;
-import manager.tasks.memoryManager.InMemoryTaskManager;
 import manager.tasks.TaskManager;
+import manager.tasks.file.FileBackedTasksManager;
+import manager.tasks.memory.InMemoryTaskManager;
 
 import java.io.File;
-import java.nio.file.Path;
 
 public class Managers {
 

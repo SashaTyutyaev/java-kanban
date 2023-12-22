@@ -1,6 +1,5 @@
-package manager.tasks.memoryManager;
+package manager.tasks.memory;
 
-import exceptions.ManagerSaveException;
 import manager.Managers;
 import manager.history.HistoryManager;
 import manager.tasks.TaskManager;
@@ -8,7 +7,6 @@ import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +18,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected static final HashMap<Integer, Epic> epics = new HashMap<>();
     protected static final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     protected static final HistoryManager historyManager = Managers.getDefaultHistory();
-    private int generatorId = 0;
+    protected int generatorId = 0;
 
     public int getNewIdentificator() {
         return ++generatorId;
@@ -83,7 +81,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewTask(Task task) {
-        final int id = getNewIdentificator();
+        int id = getNewIdentificator();
         task.setId(id);
         tasks.put(id, task);
         return id;
@@ -91,7 +89,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Integer addNewSubtask(Subtask subtask) {
-        final int id = getNewIdentificator();
+        int id = getNewIdentificator();
         Epic epic = epics.get(subtask.getEpicId());
         if (epic == null) {
             System.out.println("Такой важной задачи нет");
@@ -108,7 +106,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewEpic(Epic epic) {
-        final int id = getNewIdentificator();
+        int id = getNewIdentificator();
         epic.setId(id);
         updateEpicStatus(epic.getId());
         epics.put(id, epic);

@@ -1,9 +1,6 @@
-package elseFunctions;
+package converters;
 
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
-import tasks.TaskStatus;
+import tasks.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,15 +14,16 @@ public class Converter {
     }
     public static String taskToString(Epic epic) {
             return epic.getId() + "," + epic.getType() + "," + epic.getName() + "," + epic.getStatus() + "," +
-                    epic.getDescription() + "," + epic.getSubtaskId();
+                    epic.getDescription() + ",";
     }
     public static String taskToString(Subtask subtask) {
             return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + subtask.getStatus() + "," +
                     subtask.getDescription() + "," + subtask.getEpicId();
     }
 
-    public static String getTaskType(Task task){
-        return task.getType();
+    public static TaskType getTaskType(String value){
+        Task task = taskFromString(value);
+        return TaskType.valueOf(task.getType());
     }
 
     public static Task taskFromString(String value) {
