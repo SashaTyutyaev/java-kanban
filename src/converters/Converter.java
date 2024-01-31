@@ -22,8 +22,7 @@ public class Converter {
     }
 
     public static TaskType getTaskType(String value){
-        Task task = taskFromString(value);
-        return TaskType.valueOf(task.getType());
+        return TaskType.valueOf(value.split(",")[1]);
     }
 
     public static Task taskFromString(String value) {

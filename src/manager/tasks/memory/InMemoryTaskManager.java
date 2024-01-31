@@ -24,9 +24,6 @@ public class InMemoryTaskManager implements TaskManager {
         return ++generatorId;
     }
 
-    public void updateIdentificator(int ID){
-        generatorId = ID;
-    }
 
     @Override
     public Task getTask(int id) {
@@ -81,36 +78,47 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addNewTask(Task task) {
-        int id = getNewIdentificator();
-        task.setId(id);
-        tasks.put(id, task);
-        return id;
+        if (task != null) {
+            int id = getNewIdentificator();
+            task.setId(id);
+            tasks.put(id, task);
+            return id;
+        } else {
+            return -1;
+        }
     }
 
     @Override
     public Integer addNewSubtask(Subtask subtask) {
-        int id = getNewIdentificator();
-        Epic epic = epics.get(subtask.getEpicId());
-        if (epic == null) {
-            System.out.println("Такой важной задачи нет");
+        if (subtask != null) {
+            int id = getNewIdentificator();
+            Epic epic = epics.get(subtask.getEpicId());
+            if (epic == null) {
+                System.out.println("Такой важной задачи нет");
+                return -1;
+            }
+            subtask.setId(id);
+            epic.addSubtaskId(subtask.getId());
+            subtasks.put(id, subtask);
+            updateEpicStatus(subtask.getEpicId());
+            return id;
+        } else {
             return -1;
         }
-        subtask.setId(id);
-        epic.addSubtaskId(subtask.getId());
-        subtasks.put(id, subtask);
-        updateEpicStatus(subtask.getEpicId());
-        return id;
-
     }
 
 
     @Override
     public int addNewEpic(Epic epic) {
-        int id = getNewIdentificator();
-        epic.setId(id);
-        updateEpicStatus(epic.getId());
-        epics.put(id, epic);
-        return id;
+        if (epic != null) {
+            int id = getNewIdentificator();
+            epic.setId(id);
+            updateEpicStatus(epic.getId());
+            epics.put(id, epic);
+            return id;
+        } else {
+            return -1;
+        }
     }
 
     @Override
@@ -237,6 +245,10 @@ public class InMemoryTaskManager implements TaskManager {
             }
             if (done > 0 && inProgress == 0 && newTask == 0) {
                 epic.setStatus(DONE);
+                return;
+            }
+            if (done > 0) {
+                epic.setStatus(IN_PROGRESS);
             }
         }
     }

@@ -11,7 +11,7 @@ import java.io.IOException;
 public class Main {
 
 
-    public static void main(String[] args) throws ManagerSaveException, IOException {
+    public static void main(String[] args) throws ManagerSaveException {
         TaskManager manager = Managers.getDefault();
 
         //Создание

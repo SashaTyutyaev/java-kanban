@@ -1,5 +1,8 @@
 package tasks;
 
+import manager.tasks.memory.InMemoryTaskManager;
+
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -18,14 +21,16 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    public Subtask(String name, String description, TaskStatus status, int id, int epicId, int duration, LocalDateTime startTime) {
+        super(name, description, status, id, duration, startTime);
+        this.epicId = epicId;
+    }
+
 
     public int getEpicId() {
         return epicId;
     }
 
-    public void setEpicId(int epicId) {
-        this.epicId = epicId;
-    }
 
     @Override
     public String getType() {

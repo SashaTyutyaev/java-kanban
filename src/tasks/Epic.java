@@ -1,5 +1,8 @@
 package tasks;
 
+import manager.tasks.memory.InMemoryTaskManager;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -7,18 +10,45 @@ public class Epic extends Task {
 
     private ArrayList<Integer> subtaskId = new ArrayList<>();
     private TaskType type = TaskType.EPIC;
+    private LocalDateTime endTime;
+    InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
     @Override
     public String getType() {
         return type.toString();
     }
-
-    public Epic(String name, String description, TaskStatus status, int id) {
-        super(name, description, status, id);
-    }
+    
 
     public Epic(String name, String description, TaskStatus status) {
         super(name, description, status);
+    }
+
+    public Epic(String name, String description, TaskStatus status, int id) {
+        super(name, description, status, id);
+
+        endTime = taskManager.getSubtasks().get(subtaskId.get(0)).getEndTime();
+        startTime = taskManager.getSubtasks().get(subtaskId.get(0)).getStartTime();
+
+        for (Subtask sub : taskManager.getSubtasks()) {
+            if (subtaskId.contains(sub.getId())) {
+                if (sub.getEndTime() == null || sub.getStartTime() == null) {
+                    continue;
+                }
+                if (sub.getEndTime().isAfter(endTime)) {
+                    endTime = sub.getEndTime();
+                }
+                if (sub.getStartTime().isBefore(startTime)) {
+                    startTime = sub.getStartTime();
+                }
+                duration += sub.getDuration();
+            }
+        }
+    }
+
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
 
@@ -48,6 +78,7 @@ public class Epic extends Task {
         Epic epic = (Epic) o;
         return Objects.equals(subtaskId, epic.subtaskId);
     }
+
 
     @Override
     public int hashCode() {
