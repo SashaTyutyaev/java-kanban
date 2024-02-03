@@ -27,6 +27,7 @@ class EpicTest {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
         taskManager.addNewSubtask(sub2);
+        epic.getEpicTime();
         assertNotNull(epic.getStartTime(), "Время начала не найдено");
         assertEquals(epic.getStartTime(), sub1.getStartTime(), "Время начала не совпадает");
     }
