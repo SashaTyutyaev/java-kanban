@@ -1,9 +1,7 @@
 package manager.tasks;
 
-import exceptions.ManagerSaveException;
 import tasks.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +24,7 @@ public interface TaskManager {
 
     int addNewEpic(Epic epic);
 
-    Integer addNewSubtask(Subtask subtask);
+    int addNewSubtask(Subtask subtask);
 
     void updateTask(Task task);
 
@@ -47,5 +45,7 @@ public interface TaskManager {
     void deleteAllSubtasks();
 
     List<Task> getHistory();
+
+    ArrayList<Task> getPrioritizedTasks();
 
 }

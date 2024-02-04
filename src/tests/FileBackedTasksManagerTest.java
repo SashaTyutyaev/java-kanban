@@ -16,12 +16,15 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     @BeforeEach
     void beforeEach() {
         super.beforeEach();
-        taskManager = new FileBackedTasksManager(new File("/Users/sashatyutyaev/dev/java-kanban/src/tasks2.csv").toPath());
+        taskManager = new FileBackedTasksManager(new File("C:/Users/Sasha/dev/tasks2.csv").toPath());
+        taskManager.deleteAllTasks();
+        taskManager.deleteAllEpics();
+        taskManager.deleteAllSubtasks();
     }
 
     @Test
     void save() {
-        FileBackedTasksManager fb = new FileBackedTasksManager(new File("/Users/sashatyutyaev/dev/java-kanban/src/tasks2.csv").toPath());
+        FileBackedTasksManager fb = new FileBackedTasksManager(new File("C:/Users/Sasha/dev/tasks2.csv").toPath());
         Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW);
         Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS);
         Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS);
@@ -44,16 +47,16 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         fb.addNewSubtask(subtask2);
         fb.getSubtask(subtask2.getId());
 
-        compareFiles("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv", "/Users/sashatyutyaev/dev/java-kanban/src/tasks2.csv");
+        compareFiles("C:/Users/Sasha/dev/tasks.csv", "C:/Users/Sasha/dev/tasks2.csv");
     }
 
     @Test
     void saveEpicWithoutAndWithoutHistory() {
-        Epic epic1 = new Epic("Epic #1", "Epic1 description", TaskStatus.NEW);
-        FileBackedTasksManager actualFb = new FileBackedTasksManager(new File("/Users/sashatyutyaev/dev/java-kanban/src/tasks3.csv").toPath());
+        Epic epic1 = new Epic("Epic #1", "Epic1 description", TaskStatus.NEW,1);
+        FileBackedTasksManager actualFb = new FileBackedTasksManager(new File("C:/Users/Sasha/dev/tasks3.csv").toPath());
         actualFb.addNewEpic(epic1);
 
-        compareFiles("/Users/sashatyutyaev/dev/java-kanban/src/tasks3.csv", "/Users/sashatyutyaev/dev/java-kanban/src/tasks2.csv");
+        compareFiles("C:/Users/Sasha/dev/tasks3.csv", "C:/Users/Sasha/dev/tasks2.csv");
 
     }
 

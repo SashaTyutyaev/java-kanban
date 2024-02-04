@@ -1,12 +1,16 @@
 package tests;
 
 import manager.tasks.TaskManager;
+import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
 
+import java.awt.image.AreaAveragingScaleFilter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +24,21 @@ abstract class TaskManagerTest<T extends TaskManager> {
     protected Task task;
     protected Epic epic;
     protected Subtask subtaskWithNewStatus;
+    protected Subtask subtaskWithNewStatus2;
 
     @BeforeEach
     void beforeEach() {
         task = new Task("taskName", "taskDescription", NEW);
         epic = new Epic("epicName", "epicDescription", NEW);
         subtaskWithNewStatus = new Subtask("SubName", "SubDescription", NEW, epic.getId());
+        subtaskWithNewStatus2 = new Subtask("SubName", "SubDescription", NEW, epic.getId());
+    }
+
+    @AfterEach
+    void afterEach() {
+        taskManager.deleteAllEpics();
+        taskManager.deleteAllTasks();
+        taskManager.deleteAllSubtasks();
     }
 
     @Test
@@ -98,6 +111,25 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void getEpicSubtasksWithoutSubs() {
         taskManager.addNewEpic(epic);
         assertEquals(0,epic.getSubtaskId().size(),"Список не пустой");
+    }
+
+    @Test
+    void getPrioritizedTasks() {
+        Task task1 = new Task("SubName", "SubDescription", NEW,20,LocalDateTime.of(2022,1,1,1,1,1));
+        taskManager.addNewTask(task1);
+        final int id = taskManager.addNewEpic(epic);
+        Subtask sub1 = new Subtask("SubName", "SubDescription", NEW, id,20,LocalDateTime.of(2023,1,1,1,1,1));
+        Subtask sub2 = new Subtask("Sub2Name", "Sub2Description", NEW, id,30,LocalDateTime.of(2024,1,1,1,1,1));
+        taskManager.addNewSubtask(sub1);
+        taskManager.addNewSubtask(sub2);
+
+        ArrayList<Task> expectedTasks = new ArrayList<>();
+        expectedTasks.add(task1);
+        expectedTasks.add(sub1);
+        expectedTasks.add(sub2);
+        expectedTasks.add(epic);
+
+        assertEquals(expectedTasks, taskManager.getPrioritizedTasks());
     }
 
 

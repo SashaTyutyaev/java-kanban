@@ -17,7 +17,7 @@ public class Epic extends Task {
     public String getType() {
         return type.toString();
     }
-    
+
 
     public Epic(String name, String description, TaskStatus status) {
         super(name, description, status);
@@ -28,8 +28,8 @@ public class Epic extends Task {
     }
 
     public void getEpicTime() {
-        endTime = taskManager.getSubtasks().get(subtaskId.get(0)).getEndTime();
-        startTime = taskManager.getSubtasks().get(subtaskId.get(0)).getStartTime();
+        endTime = taskManager.subtasks.get(subtaskId.get(0)).getEndTime();
+        startTime = taskManager.subtasks.get(subtaskId.get(0)).getStartTime();
 
         for (Subtask sub : taskManager.getSubtasks()) {
             if (subtaskId.contains(sub.getId())) {
@@ -51,6 +51,11 @@ public class Epic extends Task {
     @Override
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    @Override
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
 

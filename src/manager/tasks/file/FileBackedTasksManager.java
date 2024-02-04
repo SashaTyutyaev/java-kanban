@@ -112,7 +112,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Integer addNewSubtask(Subtask subtask) {
+    public int addNewSubtask(Subtask subtask) {
         super.addNewSubtask(subtask);
         save();
         return subtask.getId();
@@ -177,7 +177,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) {
-        final FileBackedTasksManager fb = new FileBackedTasksManager(Path.of("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
+        final FileBackedTasksManager fb = new FileBackedTasksManager(Path.of("C:/Users/Sasha/dev/tasks.csv"));
         Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW);
         Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS);
         Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS);
@@ -201,7 +201,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fb.getSubtask(subtask1.getId());
         fb.addNewSubtask(subtask2);
         fb.getSubtask(subtask2.getId());
-        FileBackedTasksManager fb2 = fb.loadFromFile(new File("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
+        FileBackedTasksManager fb2 = fb.loadFromFile(new File("C:/Users/Sasha/dev/tasks.csv"));
         Task task4 = new Task("Task #4", "Task4 description", TaskStatus.IN_PROGRESS);
         Task task5 = new Task("Task #5", "Task5 description", TaskStatus.IN_PROGRESS);
         fb2.addNewTask(task4);

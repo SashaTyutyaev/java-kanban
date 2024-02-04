@@ -294,6 +294,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         Subtask removedSub = taskManager.getSubtask(newSub2.getId());
         assertNotNull(removedSub, "Подзадача не найдена");
         assertEquals(newSub2, removedSub, "Задачи не совпадают");
+        System.out.println(taskManager.getPrioritizedTasks().size());
         taskManager.deleteSubtask(newSub2.getId());
         assertEquals(1, taskManager.getSubtasks().size(), "Подзадача не удалилась из списка");
     }
