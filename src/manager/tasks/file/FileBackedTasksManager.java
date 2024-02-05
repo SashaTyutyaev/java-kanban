@@ -209,10 +209,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fb2.addNewEpic(epic3);
         fb2.addNewSubtask(subtask3);
         fb2.getTask(task4.getId());
-        System.out.println(fb2.getTasks());
-        System.out.println(fb2.getEpics());
-        System.out.println(fb2.getSubtasks());
-        System.out.println(fb2.getHistory());
+        System.out.println(fb.getTasks());
+        System.out.println(fb.getEpics());
+        System.out.println(fb.getSubtasks());
+        System.out.println(fb.getHistory());
     }
 
 }

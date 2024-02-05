@@ -16,7 +16,7 @@ import java.util.TreeSet;
 import static tasks.TaskStatus.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    protected static final HashMap<Integer, Task> tasks = new HashMap<>();
+    public static final HashMap<Integer, Task> tasks = new HashMap<>();
     protected static final HashMap<Integer, Epic> epics = new HashMap<>();
     public static final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     protected static final HistoryManager historyManager = Managers.getDefaultHistory();
@@ -166,9 +166,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTask(int id) {
-        tasks.remove(id);
         historyManager.remove(id);
         taskTreeSet.remove(tasks.get(id));
+        tasks.remove(id);
     }
 
     @Override
@@ -179,9 +179,9 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(i);
             taskTreeSet.remove(subtasks.get(i));
         }
-        epics.remove(id);
         historyManager.remove(id);
         taskTreeSet.remove(epics.get(id));
+        epics.remove(id);
     }
 
 
@@ -189,10 +189,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubtask(int id) {
         if (subtasks.containsKey(id)) {
             int epicId = subtasks.get(id).getEpicId();
-            subtasks.remove(id);
-            epics.get(epicId).removeSubtask(id);
             historyManager.remove(id);
             taskTreeSet.remove(subtasks.get(id));
+            subtasks.remove(id);
+            epics.get(epicId).removeSubtask(id);
             updateEpicStatus(epicId);
         }
     }
