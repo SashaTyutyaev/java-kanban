@@ -2,23 +2,27 @@ package converters;
 
 import tasks.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Converter {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static String taskToString(Task task) {
             return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," +
-                    task.getDescription() + ",";
+                    task.getDescription() + "," + " " + "," + task.getDuration() + "," + task.getStartTime().format(formatter) + ",";
     }
     public static String taskToString(Epic epic) {
             return epic.getId() + "," + epic.getType() + "," + epic.getName() + "," + epic.getStatus() + "," +
-                    epic.getDescription() + ",";
+                    epic.getDescription() + "," + " " + "," + epic.getDuration() + "," + epic.getStartTime().format(formatter) + ",";
     }
     public static String taskToString(Subtask subtask) {
             return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + subtask.getStatus() + "," +
-                    subtask.getDescription() + "," + subtask.getEpicId();
+                    subtask.getDescription() + "," + subtask.getEpicId()  + "," + subtask.getDuration() + "," + subtask.getStartTime().format(formatter) + ",";
     }
 
     public static TaskType getTaskType(String value){
@@ -35,7 +39,9 @@ public class Converter {
         String name = elem[2];
         TaskStatus status = TaskStatus.valueOf(elem[3]);
         String description = elem[4];
-        return new Task(name, description, status, id);
+        int duration = Integer.parseInt(elem[6]);
+        LocalDateTime startTime = LocalDateTime.parse(elem[7],formatter);
+        return new Task(name, description, status, id, duration,startTime);
     }
 
     public static Subtask subFromString(String value) {
@@ -49,7 +55,9 @@ public class Converter {
         TaskStatus status = TaskStatus.valueOf(elem[3]);
         String description = elem[4];
         int epicId = Integer.parseInt(elem[5]);
-        return new Subtask(name, description, status, id, epicId);
+        int duration = Integer.parseInt(elem[6]);
+        LocalDateTime startTime = LocalDateTime.parse(elem[7],formatter);
+        return new Subtask(name, description, status, id, epicId,duration,startTime);
     }
 
     public static Epic epicFromString(String value) {
@@ -62,7 +70,9 @@ public class Converter {
         String name = elem[2];
         TaskStatus status = TaskStatus.valueOf(elem[3]);
         String description = elem[4];
-        return new Epic(name, description, status, id);
+        int duration = Integer.parseInt(elem[6]);
+        LocalDateTime startTime = LocalDateTime.parse(elem[7],formatter);
+        return new Epic(name,description,status,id,duration,startTime);
     }
 
     public static String historyToString(List<Task> taskList) {

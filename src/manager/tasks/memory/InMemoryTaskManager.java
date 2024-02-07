@@ -1,6 +1,6 @@
 package manager.tasks.memory;
 
-import comparators.taskComparator;
+import comparators.TaskComparator;
 import manager.Managers;
 import manager.history.HistoryManager;
 import manager.tasks.TaskManager;
@@ -16,14 +16,14 @@ import java.util.TreeSet;
 import static tasks.TaskStatus.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    public static final HashMap<Integer, Task> tasks = new HashMap<>();
+    protected static final HashMap<Integer, Task> tasks = new HashMap<>();
     protected static final HashMap<Integer, Epic> epics = new HashMap<>();
     public static final HashMap<Integer, Subtask> subtasks = new HashMap<>();
     protected static final HistoryManager historyManager = Managers.getDefaultHistory();
-    protected static TreeSet<Task> taskTreeSet = new TreeSet<>(new taskComparator());
+    protected static TreeSet<Task> taskTreeSet = new TreeSet<>(new TaskComparator());
     protected int generatorId = 0;
 
-    public int getNewIdentificator() {
+    private int getNewIdentificator() {
         return ++generatorId;
     }
 
@@ -104,6 +104,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtask.setId(id);
             epic.addSubtaskId(subtask.getId());
             subtasks.put(id, subtask);
+            epics.get(subtask.getEpicId()).getEpicTime();
             updateEpicStatus(subtask.getEpicId());
             taskTreeSet.add(subtask);
             return id;

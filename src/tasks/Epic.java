@@ -27,6 +27,10 @@ public class Epic extends Task {
         super(name, description, status, id);
     }
 
+    public Epic(String name, String description, TaskStatus status, int id, int duration, LocalDateTime startTime) {
+        super(name, description, status, id,duration,startTime);
+    }
+
     public void getEpicTime() {
         endTime = taskManager.subtasks.get(subtaskId.get(0)).getEndTime();
         startTime = taskManager.subtasks.get(subtaskId.get(0)).getStartTime();

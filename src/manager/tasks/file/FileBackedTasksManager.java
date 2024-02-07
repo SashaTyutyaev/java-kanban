@@ -10,6 +10,7 @@ import tasks.TaskStatus;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -25,7 +26,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(String.valueOf(path)))) {
-            writer.append("id,type,name,status,description,epic\n");
+            writer.append("id,type,name,status,description,epic,duration,startTime\n");
             for (Task task : getTasks()) {
                 writer.write(Converter.taskToString(task) + "\n");
             }
@@ -107,42 +108,42 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public int addNewTask(Task task) {
         super.addNewTask(task);
-        save();
+//        save();
         return task.getId();
     }
 
     @Override
     public int addNewSubtask(Subtask subtask) {
         super.addNewSubtask(subtask);
-        save();
+//        save();
         return subtask.getId();
     }
 
     @Override
     public int addNewEpic(Epic epic) {
         super.addNewEpic(epic);
-        save();
+//        save();
         return epic.getId();
     }
 
     @Override
     public Task getTask(int id) {
         super.getTask(id);
-        save();
+//        save();
         return tasks.get(id);
     }
 
     @Override
     public Subtask getSubtask(int id) {
         super.getSubtask(id);
-        save();
+//        save();
         return subtasks.get(id);
     }
 
     @Override
     public Epic getEpic(int id) {
         super.getEpic(id);
-        save();
+//        save();
         return epics.get(id);
     }
 
@@ -177,10 +178,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) {
-        final FileBackedTasksManager fb = new FileBackedTasksManager(Path.of("C:/Users/Sasha/dev/tasks.csv"));
-        Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW);
-        Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS);
-        Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS);
+        final FileBackedTasksManager fb = new FileBackedTasksManager(Path.of("C:/Users/Sasha/dev/java-kanban/tasks.csv"));
+        Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW,30, LocalDateTime.of(2024,1,1,1,1,1));
+        Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS,30, LocalDateTime.of(2023,1,1,1,1,1));
+        Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS,30, LocalDateTime.of(2022,1,1,1,1,1));
         fb.addNewTask(task1);
         fb.getTask(task1.getId());
         fb.addNewTask(task2);
@@ -194,21 +195,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fb.getEpic(epic1.getId());
         fb.addNewEpic(epic2);
         fb.getEpic(epic2.getId());
-        Subtask subtask1 = new Subtask("Subtask #1-1", "Subtask1 description", TaskStatus.NEW, epic1.getId());
-        Subtask subtask2 = new Subtask("Subtask #2-1", "Subtask2 description", TaskStatus.NEW, epic2.getId());
-        Subtask subtask3 = new Subtask("Subtask #3-1", "Subtask3 description", TaskStatus.NEW, epic2.getId());
+        Subtask subtask1 = new Subtask("Subtask #1-1", "Subtask1 description", TaskStatus.NEW, epic1.getId(),30, LocalDateTime.of(2024,1,1,1,1,1));
+        Subtask subtask2 = new Subtask("Subtask #2-1", "Subtask2 description", TaskStatus.NEW, epic2.getId(),30, LocalDateTime.of(2023,1,1,1,1,1));
+        Subtask subtask3 = new Subtask("Subtask #3-1", "Subtask3 description", TaskStatus.NEW, epic2.getId(),30, LocalDateTime.of(2024,1,1,1,1,1));
+        Subtask subtask4 = new Subtask("Subtask #4-1", "Subtask3 description", TaskStatus.NEW, epic2.getId(),90, LocalDateTime.of(2024,1,1,1,1,1));
         fb.addNewSubtask(subtask1);
         fb.getSubtask(subtask1.getId());
         fb.addNewSubtask(subtask2);
         fb.getSubtask(subtask2.getId());
-        FileBackedTasksManager fb2 = fb.loadFromFile(new File("C:/Users/Sasha/dev/tasks.csv"));
-        Task task4 = new Task("Task #4", "Task4 description", TaskStatus.IN_PROGRESS);
-        Task task5 = new Task("Task #5", "Task5 description", TaskStatus.IN_PROGRESS);
+        fb.addNewSubtask(subtask4);
+        fb.getSubtask(subtask4.getId());
+        fb.save();
+        FileBackedTasksManager fb2 = fb.loadFromFile(new File("C:/Users/Sasha/dev/java-kanban/tasks.csv"));
+        Task task4 = new Task("Task #4", "Task4 description", TaskStatus.IN_PROGRESS,30, LocalDateTime.of(2024,1,1,1,1,1));
+        Task task5 = new Task("Task #5", "Task5 description", TaskStatus.IN_PROGRESS,30, LocalDateTime.of(2024,1,1,1,1,1));
         fb2.addNewTask(task4);
         fb2.addNewTask(task5);
-        fb2.addNewEpic(epic3);
         fb2.addNewSubtask(subtask3);
         fb2.getTask(task4.getId());
+        fb2.save();
         System.out.println(fb.getTasks());
         System.out.println(fb.getEpics());
         System.out.println(fb.getSubtasks());
