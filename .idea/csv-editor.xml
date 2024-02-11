@@ -10,28 +10,28 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\src\tasks.csv">
+        <entry key="\src\resources\tasks.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\src\tasks2.csv">
+        <entry key="\src\resources\testTasks.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\src\tasks3.csv">
+        <entry key="\src\resources\testTasks2.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\tasks.csv">
+        <entry key="\src\resources\testTasks3.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

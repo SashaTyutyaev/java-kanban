@@ -1,7 +1,6 @@
 package tests;
 
 import manager.tasks.memory.InMemoryTaskManager;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
@@ -28,7 +27,7 @@ class EpicTest {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
         taskManager.addNewSubtask(sub2);
-        epic.getEpicTime();
+        taskManager.calculateEpicTime(epic);
         assertNotNull(epic.getStartTime(), "Время начала не найдено");
         assertEquals(epic.getStartTime(), sub1.getStartTime(), "Время начала не совпадает");
     }
@@ -39,7 +38,7 @@ class EpicTest {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
         taskManager.addNewSubtask(sub2);
-        epic.getEpicTime();
+        taskManager.calculateEpicTime(epic);
         assertNotNull(epic.getEndTime(), "Время конца не найдено");
         assertEquals(epic.getEndTime(), sub2.getEndTime(), "Время конца не совпадает");
     }
@@ -50,7 +49,7 @@ class EpicTest {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1);
         taskManager.addNewSubtask(sub2);
-        epic.getEpicTime();
+        taskManager.calculateEpicTime(epic);
         assertNull(epic.getStartTime(), "Время должно быть null");
         assertEquals(epic.getStartTime(), sub1.getStartTime(), "Время не совпадает");
     }
@@ -61,7 +60,7 @@ class EpicTest {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1);
         taskManager.addNewSubtask(sub2);
-        epic.getEpicTime();
+        taskManager.calculateEpicTime(epic);
         assertNull(epic.getEndTime(), "Время должно быть null");
         assertEquals(epic.getEndTime(), sub2.getEndTime(), "Время не совпадает");
     }
@@ -72,7 +71,7 @@ class EpicTest {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
         taskManager.addNewSubtask(sub2);
-        epic.getEpicTime();
+        taskManager.calculateEpicTime(epic);
         int expectedDuration = sub1.getDuration() + sub2.getDuration();
         int actualDuration = epic.getDuration();
         assertNotNull(actualDuration, "Длительность задачи не найдена");
@@ -85,7 +84,7 @@ class EpicTest {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1);
         taskManager.addNewSubtask(sub2);
-        epic.getEpicTime();
+        taskManager.calculateEpicTime(epic);
         int actualDuration = epic.getDuration();
         assertEquals(actualDuration,0, "Время должно быть null");
         assertEquals(actualDuration, sub1.getDuration(), "Время не совпадает");

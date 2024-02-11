@@ -22,6 +22,6 @@ public class Managers {
     }
 
     public static FileBackedTasksManager getFileManager() {
-        return FileBackedTasksManager.loadFromFile(new File("/Users/sashatyutyaev/dev/java-kanban/src/tasks.csv"));
+        return FileBackedTasksManager.loadFromFile(new File("/Users/sashatyutyaev/dev/java-kanban/src/testTasks.csv"));
     }
 }
