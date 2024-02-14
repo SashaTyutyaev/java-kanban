@@ -53,6 +53,19 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         compareFiles("src/resources/testTasks.csv", "src/resources/testTasks2.csv");
     }
 
+<<<<<<< HEAD
+=======
+    @Test
+    void saveEpicWithoutAndWithoutHistory() {
+        Epic epic1 = new Epic("Epic #1", "Epic1 description", TaskStatus.NEW, 1);
+        FileBackedTasksManager actualFb = new FileBackedTasksManager(new File("src/resources/testTasks3.csv").toPath());
+        actualFb.addNewEpic(epic1);
+        actualFb.save();
+
+        compareFiles("src/resources/testTasks3.csv", "src/resources/testTasks2.csv");
+
+    }
+>>>>>>> dcdbe551a638ab9ac549455b83ec692b03b71af5
 
 
     private void compareFiles(String expectedFile, String actualFile) {
