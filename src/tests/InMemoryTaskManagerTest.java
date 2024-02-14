@@ -59,6 +59,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         assertEquals(1, tasks.size(), "Неверное количество задач.");
         assertEquals(task, tasks.get(0), "Задачи не совпадают.");
     }
+    
 
     @Test
     void addNewTaskIfNull() {
@@ -323,6 +324,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         assertNotNull(testEpic.getStartTime(), "Время начала не найдено");
         assertEquals(testEpic.getStartTime(), sub1.getStartTime(), "Время начала не совпадает");
     }
+
     @Test
     public void shouldReturnCorrectEndTime() {
         taskManager.addNewEpic(testEpic);
@@ -382,7 +384,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         taskManager.addNewSubtask(sub2);
         taskManager.calculateEpicTime(testEpic);
         int actualDuration = testEpic.getDuration();
-        assertEquals(actualDuration,0, "Время должно быть null");
+        assertEquals(actualDuration, 0, "Время должно быть null");
         assertEquals(actualDuration, sub1.getDuration(), "Время не совпадает");
     }
 
