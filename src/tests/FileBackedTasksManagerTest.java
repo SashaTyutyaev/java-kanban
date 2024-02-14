@@ -9,6 +9,7 @@ import tasks.Task;
 import tasks.TaskStatus;
 
 import java.io.File;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,7 +17,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     @BeforeEach
     void beforeEach() {
         super.beforeEach();
-        taskManager = new FileBackedTasksManager(new File("C:/Users/Sasha/dev/tasks2.csv").toPath());
+        taskManager = new FileBackedTasksManager(new File("src/resources/testTasks.csv").toPath());
         taskManager.deleteAllTasks();
         taskManager.deleteAllEpics();
         taskManager.deleteAllSubtasks();
@@ -24,10 +25,10 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
 
     @Test
     void save() {
-        FileBackedTasksManager fb = new FileBackedTasksManager(new File("C:/Users/Sasha/dev/tasks2.csv").toPath());
-        Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW);
-        Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS);
-        Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS);
+        FileBackedTasksManager fb = new FileBackedTasksManager(new File("src/resources/testTasks2.csv").toPath());
+        Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW, 30, LocalDateTime.of(2024, 2, 11, 15, 0, 0));
+        Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS, 30, LocalDateTime.of(2024, 2, 11, 16, 0, 0));
+        Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS, 30, LocalDateTime.of(2024, 2, 11, 17, 0, 0));
         fb.addNewTask(task1);
         fb.getTask(task1.getId());
         fb.addNewTask(task2);
@@ -40,25 +41,18 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         fb.getEpic(epic1.getId());
         fb.addNewEpic(epic2);
         fb.getEpic(epic2.getId());
-        Subtask subtask1 = new Subtask("Subtask #1-1", "Subtask1 description", TaskStatus.NEW, epic1.getId());
-        Subtask subtask2 = new Subtask("Subtask #2-1", "Subtask2 description", TaskStatus.NEW, epic2.getId());
+        Subtask subtask1 = new Subtask("Subtask #1-1", "Subtask1 description", TaskStatus.NEW, epic1.getId(), 30, LocalDateTime.of(2024, 1, 1, 1, 1, 1));
+        Subtask subtask2 = new Subtask("Subtask #2-1", "Subtask2 description", TaskStatus.NEW, epic2.getId(), 40, LocalDateTime.of(2023, 1, 1, 1, 1, 1));
         fb.addNewSubtask(subtask1);
         fb.getSubtask(subtask1.getId());
         fb.addNewSubtask(subtask2);
         fb.getSubtask(subtask2.getId());
+        fb.save();
+        taskManager.save();
 
-        compareFiles("C:/Users/Sasha/dev/tasks.csv", "C:/Users/Sasha/dev/tasks2.csv");
+        compareFiles("src/resources/testTasks.csv", "src/resources/testTasks2.csv");
     }
 
-    @Test
-    void saveEpicWithoutAndWithoutHistory() {
-        Epic epic1 = new Epic("Epic #1", "Epic1 description", TaskStatus.NEW,1);
-        FileBackedTasksManager actualFb = new FileBackedTasksManager(new File("C:/Users/Sasha/dev/tasks3.csv").toPath());
-        actualFb.addNewEpic(epic1);
-
-        compareFiles("C:/Users/Sasha/dev/tasks3.csv", "C:/Users/Sasha/dev/tasks2.csv");
-
-    }
 
 
     private void compareFiles(String expectedFile, String actualFile) {

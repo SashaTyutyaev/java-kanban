@@ -9,10 +9,11 @@ import tasks.Subtask;
 import tasks.Task;
 import tasks.TaskStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static tasks.TaskStatus.DONE;
 import static tasks.TaskStatus.NEW;
 
@@ -20,6 +21,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     private Epic epicWithNewAndDoneSub;
     private Epic epicWithNewSubs;
     private Epic epicWithDoneSubs;
+    private Epic testEpic = new Epic("EpicTest1", "EpicTestDescription1", TaskStatus.NEW, 1);
     private Subtask subWithDoneStatus;
     private Subtask subWithNewStatus;
 
@@ -308,5 +310,127 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         assertEquals(epic, removedEpic, "Задачи не совпадают");
         taskManager.deleteEpic(id);
         assertEquals(1, taskManager.getEpics().size(), "Задача не удалилась из списка");
+    }
+
+    @Test
+    public void shouldReturnCorrectStartTime() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.NEW, 2, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub2);
+        taskManager.calculateEpicTime(testEpic);
+        assertNotNull(testEpic.getStartTime(), "Время начала не найдено");
+        assertEquals(testEpic.getStartTime(), sub1.getStartTime(), "Время начала не совпадает");
+    }
+    @Test
+    public void shouldReturnCorrectEndTime() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.NEW, 2, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub2);
+        taskManager.calculateEpicTime(testEpic);
+        assertNotNull(testEpic.getEndTime(), "Время конца не найдено");
+        assertEquals(testEpic.getEndTime(), sub2.getEndTime(), "Время конца не совпадает");
+    }
+
+    @Test
+    public void shouldReturnNullStartTime() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.NEW, 2, 1);
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1);
+        taskManager.addNewSubtask(sub2);
+        taskManager.calculateEpicTime(testEpic);
+        assertNull(testEpic.getStartTime(), "Время должно быть null");
+        assertEquals(testEpic.getStartTime(), sub1.getStartTime(), "Время не совпадает");
+    }
+
+    @Test
+    public void shouldReturnNullEndTime() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.NEW, 2, 1);
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1);
+        taskManager.addNewSubtask(sub2);
+        taskManager.calculateEpicTime(testEpic);
+        assertNull(testEpic.getEndTime(), "Время должно быть null");
+        assertEquals(testEpic.getEndTime(), sub2.getEndTime(), "Время не совпадает");
+    }
+
+    @Test
+    public void shouldReturnCorrectDuration() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.NEW, 2, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub2);
+        taskManager.calculateEpicTime(testEpic);
+        int expectedDuration = sub1.getDuration() + sub2.getDuration();
+        int actualDuration = testEpic.getDuration();
+        assertNotNull(actualDuration, "Длительность задачи не найдена");
+        assertEquals(actualDuration, expectedDuration, "Длительности не совпадают");
+    }
+
+    @Test
+    public void shouldReturnZeroDuration() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.NEW, 2, 1);
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1);
+        taskManager.addNewSubtask(sub2);
+        taskManager.calculateEpicTime(testEpic);
+        int actualDuration = testEpic.getDuration();
+        assertEquals(actualDuration,0, "Время должно быть null");
+        assertEquals(actualDuration, sub1.getDuration(), "Время не совпадает");
+    }
+
+    @Test
+    public void shouldReturnEpicWithoutSubs() {
+        taskManager.addNewEpic(testEpic);
+        int subsSize = testEpic.getSubtaskId().size();
+        assertEquals(0, subsSize);
+        assertEquals(TaskStatus.NEW, testEpic.getStatus());
+    }
+
+    @Test
+    public void shouldReturnEpicStatusNewWhenAllSubsNew() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.NEW, 2, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub2);
+        assertEquals(TaskStatus.NEW, testEpic.getStatus());
+    }
+
+    @Test
+    public void shouldReturnEpicStatusDoneWhenAllSubsDone() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.DONE, 2, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.DONE, 3, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub2);
+        assertEquals(TaskStatus.DONE, testEpic.getStatus());
+    }
+
+    @Test
+    public void shouldReturnEpicStatusInProgressWhenSubsNewAndDone() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.NEW, 2, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.DONE, 3, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub2);
+        assertEquals(TaskStatus.IN_PROGRESS, testEpic.getStatus());
+    }
+
+    @Test
+    public void shouldReturnEpicStatusInProgressWhenSubsInProgress() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.IN_PROGRESS, 2, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.IN_PROGRESS, 3, 1, 20, LocalDateTime.of(2023, 1, 1, 1, 1));
+        taskManager.addNewSubtask(sub2);
+        assertEquals(TaskStatus.IN_PROGRESS, testEpic.getStatus());
     }
 }

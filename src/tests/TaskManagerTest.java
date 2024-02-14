@@ -115,7 +115,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getPrioritizedTasks() {
-        Task task1 = new Task("SubName", "SubDescription", NEW,20,LocalDateTime.of(2022,1,1,1,1,1));
+        Task task1 = new Task("Name", "Description", NEW,20,LocalDateTime.of(2022,1,1,1,1,1));
         taskManager.addNewTask(task1);
         final int id = taskManager.addNewEpic(epic);
         Subtask sub1 = new Subtask("SubName", "SubDescription", NEW, id,20,LocalDateTime.of(2023,1,1,1,1,1));
@@ -127,10 +127,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
         expectedTasks.add(task1);
         expectedTasks.add(sub1);
         expectedTasks.add(sub2);
-        expectedTasks.add(epic);
 
         assertEquals(expectedTasks, taskManager.getPrioritizedTasks());
     }
+
+
 
 
 }

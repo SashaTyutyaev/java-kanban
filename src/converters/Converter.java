@@ -13,19 +13,27 @@ public class Converter {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static String taskToString(Task task) {
-            return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," +
-                    task.getDescription() + "," + " " + "," + task.getDuration() + "," + task.getStartTime().format(formatter) + ",";
-    }
-    public static String taskToString(Epic epic) {
-            return epic.getId() + "," + epic.getType() + "," + epic.getName() + "," + epic.getStatus() + "," +
-                    epic.getDescription() + "," + " " + "," + epic.getDuration() + "," + epic.getStartTime().format(formatter) + ",";
-    }
-    public static String taskToString(Subtask subtask) {
-            return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + subtask.getStatus() + "," +
-                    subtask.getDescription() + "," + subtask.getEpicId()  + "," + subtask.getDuration() + "," + subtask.getStartTime().format(formatter) + ",";
+        return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," +
+                task.getDescription() + "," + task.getDuration() + "," + task.getStartTime().format(formatter) + ",";
     }
 
-    public static TaskType getTaskType(String value){
+    public static String taskToString(Epic epic) {
+        if (epic.getStartTime() != null ) {
+            return epic.getId() + "," + epic.getType() + "," + epic.getName() + "," + epic.getStatus() + "," +
+                    epic.getDescription() + "," + epic.getDuration() + "," + epic.getStartTime().format(formatter) + ",";
+        }
+        else {
+            return epic.getId() + "," + epic.getType() + "," + epic.getName() + "," + epic.getStatus() + "," +
+                    epic.getDescription() + ",";
+        }
+    }
+
+    public static String taskToString(Subtask subtask) {
+        return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + subtask.getStatus() + "," +
+                subtask.getDescription() + "," + subtask.getEpicId() + "," + subtask.getDuration() + "," + subtask.getStartTime().format(formatter) + ",";
+    }
+
+    public static TaskType getTaskType(String value) {
         return TaskType.valueOf(value.split(",")[1]);
     }
 
@@ -39,9 +47,9 @@ public class Converter {
         String name = elem[2];
         TaskStatus status = TaskStatus.valueOf(elem[3]);
         String description = elem[4];
-        int duration = Integer.parseInt(elem[6]);
-        LocalDateTime startTime = LocalDateTime.parse(elem[7],formatter);
-        return new Task(name, description, status, id, duration,startTime);
+        int duration = Integer.parseInt(elem[5]);
+        LocalDateTime startTime = LocalDateTime.parse(elem[6],formatter);
+        return new Task(name, description, status, id, duration, startTime);
     }
 
     public static Subtask subFromString(String value) {
@@ -57,7 +65,7 @@ public class Converter {
         int epicId = Integer.parseInt(elem[5]);
         int duration = Integer.parseInt(elem[6]);
         LocalDateTime startTime = LocalDateTime.parse(elem[7],formatter);
-        return new Subtask(name, description, status, id, epicId,duration,startTime);
+        return new Subtask(name, description, status, id, epicId, duration, startTime);
     }
 
     public static Epic epicFromString(String value) {
@@ -70,9 +78,9 @@ public class Converter {
         String name = elem[2];
         TaskStatus status = TaskStatus.valueOf(elem[3]);
         String description = elem[4];
-        int duration = Integer.parseInt(elem[6]);
-        LocalDateTime startTime = LocalDateTime.parse(elem[7],formatter);
-        return new Epic(name,description,status,id,duration,startTime);
+        int duration = Integer.parseInt(elem[5]);
+        LocalDateTime startTime = LocalDateTime.parse(elem[6],formatter);
+        return new Epic(name, description, status, id, duration, startTime);
     }
 
     public static String historyToString(List<Task> taskList) {
