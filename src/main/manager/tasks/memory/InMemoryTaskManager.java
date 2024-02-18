@@ -1,17 +1,17 @@
-package manager.tasks.memory;
+package main.manager.tasks.memory;
 
-import comparators.TaskComparator;
-import manager.Managers;
-import manager.history.HistoryManager;
-import manager.tasks.TaskManager;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import main.comparators.TaskComparator;
+import main.manager.Managers;
+import main.manager.history.HistoryManager;
+import main.manager.tasks.TaskManager;
+import main.tasks.Epic;
+import main.tasks.Subtask;
+import main.tasks.Task;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static tasks.TaskStatus.*;
+import static main.tasks.TaskStatus.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected static final HashMap<Integer, Task> tasks = new HashMap<>();
@@ -82,7 +82,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (task != null) {
             int id = getNewIdentificator();
             task.setId(id);
-            validation(task);
+            validateTimeInterception(task);
             tasks.put(id, task);
             taskTreeSet.add(task);
             return id;
@@ -102,9 +102,9 @@ public class InMemoryTaskManager implements TaskManager {
             }
             subtask.setId(id);
             epic.addSubtaskId(subtask.getId());
-            validation(subtask);
+            validateTimeInterception(subtask);
             subtasks.put(id, subtask);
-            calculateEpicTime(epic);
+            updateEpicTime(epic);
             updateEpicStatus(subtask.getEpicId());
             taskTreeSet.add(subtask);
             return id;
@@ -133,7 +133,7 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         if (tasks.containsKey(task.getId())) {
-            validation(task);
+            validateTimeInterception(task);
             tasks.put(task.getId(), task);
             taskTreeSet.add(task);
         }
@@ -158,10 +158,10 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(subtask.getId())) {
             int epicId = subtasks.get(subtask.getId()).getEpicId();
             if (((Integer) subtask.getEpicId()).equals(epicId)) {
-                validation(subtask);
+                validateTimeInterception(subtask);
                 subtasks.put(subtask.getId(), subtask);
                 taskTreeSet.add(subtask);
-                calculateEpicTime(epics.get(subtask.getEpicId()));
+                updateEpicTime(epics.get(subtask.getEpicId()));
                 updateEpicStatus(subtask.getEpicId());
             }
         }
@@ -273,8 +273,7 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(taskTreeSet);
     }
 
-    @Override
-    public void calculateEpicTime(Epic epic) {
+    private void updateEpicTime(Epic epic) {
         if (epic.getSubtaskId().size() >= 1) {
             LocalDateTime subEndTime = getEpicSubtasks(epic.getId()).get(0).getEndTime();
             LocalDateTime subStartTime = getEpicSubtasks(epic.getId()).get(0).getStartTime();
@@ -298,7 +297,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public void validation(Task task) {
+    public void validateTimeInterception(Task task) {
         for (Task expTask: taskTreeSet) {
             if (Objects.equals(task.getId(),expTask.getId())) {
                 continue;

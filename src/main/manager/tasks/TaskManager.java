@@ -1,6 +1,6 @@
-package manager.tasks;
+package main.manager.tasks;
 
-import tasks.*;
+import main.tasks.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +47,5 @@ public interface TaskManager {
     List<Task> getHistory();
 
     ArrayList<Task> getPrioritizedTasks();
-    void calculateEpicTime(Epic epic);
 
 }

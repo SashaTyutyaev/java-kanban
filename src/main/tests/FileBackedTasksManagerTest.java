@@ -1,12 +1,12 @@
-package tests;
+package main.tests;
 
-import manager.tasks.file.FileBackedTasksManager;
+import main.manager.tasks.file.FileBackedTasksManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
-import tasks.TaskStatus;
+import main.tasks.Epic;
+import main.tasks.Subtask;
+import main.tasks.Task;
+import main.tasks.TaskStatus;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -47,26 +47,9 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         fb.getSubtask(subtask1.getId());
         fb.addNewSubtask(subtask2);
         fb.getSubtask(subtask2.getId());
-        fb.save();
-        taskManager.save();
 
         compareFiles("src/resources/testTasks.csv", "src/resources/testTasks2.csv");
     }
-
-<<<<<<< HEAD
-=======
-    @Test
-    void saveEpicWithoutAndWithoutHistory() {
-        Epic epic1 = new Epic("Epic #1", "Epic1 description", TaskStatus.NEW, 1);
-        FileBackedTasksManager actualFb = new FileBackedTasksManager(new File("src/resources/testTasks3.csv").toPath());
-        actualFb.addNewEpic(epic1);
-        actualFb.save();
-
-        compareFiles("src/resources/testTasks3.csv", "src/resources/testTasks2.csv");
-
-    }
->>>>>>> dcdbe551a638ab9ac549455b83ec692b03b71af5
-
 
     private void compareFiles(String expectedFile, String actualFile) {
         FileBackedTasksManager expectedFb = FileBackedTasksManager.loadFromFile(new File(expectedFile));

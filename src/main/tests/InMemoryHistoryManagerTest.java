@@ -1,10 +1,10 @@
-package tests;
+package main.tests;
 
-import manager.history.InMemoryHistoryManager;
+import main.manager.history.InMemoryHistoryManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tasks.Task;
-import tasks.TaskStatus;
+import main.tasks.Task;
+import main.tasks.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void add() {
+    void shouldReturnHistoryWithOneTask() {
         historyManager.add(task1);
         final List<Task> history = historyManager.getHistory();
         assertNotNull(history, "История пустая.");
@@ -34,13 +34,13 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void addEmptyHistory() {
-        assertNotNull(historyManager.getHistory(),"История пустая");
+    void shouldReturnHistoryWithoutTasks() {
+        assertNotNull(historyManager.getHistory(),"История не пустая");
         assertEquals(0,historyManager.getHistory().size(),"История пустая");
     }
 
     @Test
-    void addDuplicatedTasks() {
+    void shouldCorrectlyAddTaskIfOneDuplicatedTask() {
         historyManager.add(task1);
         historyManager.add(task1);
         assertNotNull(historyManager.getHistory(),"История пустая");
@@ -48,7 +48,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void addManyDuplicatedTasks() {
+    void shouldCorrectlyAddTasksIfManyDuplicatedTasks() {
         historyManager.add(task1);
         historyManager.add(task1);
         historyManager.add(task2);
@@ -58,7 +58,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void removeFirstTask() {
+    void shouldRemoveFirstTaskFromHistory() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -70,7 +70,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void removeMidTask() {
+    void shouldRemoveMidTaskFromHistory() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -82,7 +82,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void removeLastTask() {
+    void shouldRemoveLastTaskFromHistory() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -94,7 +94,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void getHistory() {
+    void shouldReturnCorrectHistoryWithThreeTasks() {
         historyManager.add(task1);
         historyManager.add(task2);
         historyManager.add(task3);
@@ -106,12 +106,6 @@ class InMemoryHistoryManagerTest {
 
         assertNotNull(historyManager.getHistory(),"История пустая");
         assertEquals(history,historyManager.getHistory(),"История не совпадает");
-    }
-
-    @Test
-    void getEmptyHistory() {
-        assertNotNull(historyManager.getHistory());
-        assertEquals(0,historyManager.getHistory().size(),"Неверная история просмотра");
     }
 
 

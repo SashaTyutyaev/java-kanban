@@ -1,12 +1,12 @@
-import manager.Managers;
-import manager.tasks.TaskManager;
-import exceptions.ManagerSaveException;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
-import tasks.TaskStatus;
+package main;
 
-import java.io.IOException;
+import main.manager.Managers;
+import main.manager.tasks.TaskManager;
+import main.exceptions.ManagerSaveException;
+import main.tasks.Epic;
+import main.tasks.Subtask;
+import main.tasks.Task;
+import main.tasks.TaskStatus;
 
 public class Main {
 

@@ -1,6 +1,4 @@
-package tasks;
-
-import manager.tasks.memory.InMemoryTaskManager;
+package main.tasks;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

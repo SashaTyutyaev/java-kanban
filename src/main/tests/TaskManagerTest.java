@@ -1,35 +1,43 @@
-package tests;
+package main.tests;
 
-import manager.tasks.memory.InMemoryTaskManager;
+import main.manager.tasks.TaskManager;
+import main.tasks.TaskStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
-import tasks.TaskStatus;
+import main.tasks.Epic;
+import main.tasks.Subtask;
+import main.tasks.Task;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import static main.tasks.TaskStatus.DONE;
+import static main.tasks.TaskStatus.NEW;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static tasks.TaskStatus.DONE;
-import static tasks.TaskStatus.NEW;
 
-class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-    private Epic epicWithNewAndDoneSub;
-    private Epic epicWithNewSubs;
-    private Epic epicWithDoneSubs;
-    private Epic testEpic = new Epic("EpicTest1", "EpicTestDescription1", TaskStatus.NEW, 1);
-    private Subtask subWithDoneStatus;
-    private Subtask subWithNewStatus;
+abstract class TaskManagerTest<T extends TaskManager> {
+
+    public T taskManager;
+    protected Task task;
+    protected Epic epic;
+    protected Subtask subtaskWithNewStatus;
+    protected Subtask subtaskWithNewStatus2;
+    protected Epic epicWithNewAndDoneSub;
+    protected Epic epicWithNewSubs;
+    protected Epic epicWithDoneSubs;
+    protected Epic testEpic = new Epic("EpicTest1", "EpicTestDescription1", TaskStatus.NEW, 1);
+    protected Subtask subWithDoneStatus;
+    protected Subtask subWithNewStatus;
 
     @BeforeEach
-    public void beforeEach() {
-        super.beforeEach();
-        taskManager = new InMemoryTaskManager();
-
+    void beforeEach() {
+        task = new Task("taskName", "taskDescription", NEW);
+        epic = new Epic("epicName", "epicDescription", NEW);
+        subtaskWithNewStatus = new Subtask("SubName", "SubDescription", NEW, epic.getId());
+        subtaskWithNewStatus2 = new Subtask("SubName", "SubDescription", NEW, epic.getId());
         epicWithNewAndDoneSub = new Epic("EpicName", "EpicDescription", NEW);
         subWithDoneStatus = new Subtask("DoneSubName", "DoneSubDescription", DONE, epicWithNewAndDoneSub.getId());
         subWithNewStatus = new Subtask("NewSubName", "NewSubDescription", NEW, epicWithNewAndDoneSub.getId());
@@ -38,14 +46,104 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @AfterEach
-    public void afterEach() {
+    void afterEach() {
+        taskManager.deleteAllEpics();
         taskManager.deleteAllTasks();
         taskManager.deleteAllSubtasks();
-        taskManager.deleteAllEpics();
     }
 
     @Test
-    void addNewTask() {
+    void getTaskById_ReturnCorrectTask_TaskInStorage() {
+        taskManager.addNewTask(task);
+        Task savedTask = taskManager.getTask(task.getId());
+        assertNotNull(savedTask, "Задача не найдена");
+        assertEquals(task, savedTask, "Задачи не совпадают");
+    }
+
+    @Test
+    void getSubtaskById_ReturnCorrectSubtask_SubtaskInStorage() {
+        final int id = taskManager.addNewEpic(epic);
+        Subtask newSub = new Subtask("SubName", "SubDescription", NEW, id);
+        final int subId = taskManager.addNewSubtask(newSub);
+        Subtask savedSub = taskManager.getSubtask(subId);
+        assertNotNull(savedSub, "Подазадча не найдена");
+        assertEquals(newSub, savedSub, "Задачи не совпадают");
+    }
+
+    @Test
+    void getEpicById_ReturnCorrectEpic_EpicInStorage() {
+        final int id = taskManager.addNewEpic(epic);
+        Epic savedEpic = taskManager.getEpic(id);
+        assertNotNull(savedEpic, "Задача не найдена");
+        assertEquals(epic, savedEpic, "Задачи не совпадают");
+    }
+
+    @Test
+    void getAllTasks_ReturnCorrectAllTasks_TasksInStorage() {
+        taskManager.addNewTask(task);
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(task);
+        assertNotNull(taskManager.getTasks(), "Задачи не возвращаются");
+        assertEquals(tasks, taskManager.getTasks(), "Возвращается неверный список");
+    }
+
+    @Test
+    void getAllSubtasks_ReturnCorrectAllSubtasks_SubtasksInStorage() {
+        final int id = taskManager.addNewEpic(epic);
+        Subtask newSub = new Subtask("SubName", "SubDescription", NEW, id);
+        taskManager.addNewSubtask(newSub);
+        List<Subtask> subtasks = new ArrayList<>();
+        subtasks.add(newSub);
+        assertNotNull(taskManager.getSubtasks(), "Задачи не возвращаются");
+        assertEquals(subtasks, taskManager.getSubtasks(), "Возвращается неверный список");
+    }
+
+    @Test
+    void getAllEpics_ReturnCorrectAllEpics_EpicsInStorage() {
+        taskManager.addNewEpic(epic);
+        List<Epic> epics = new ArrayList<>();
+        epics.add(epic);
+        assertNotNull(taskManager.getEpics(), "Задачи не возвращаются");
+        assertEquals(epics, taskManager.getEpics(), "Возвращается неверный список");
+    }
+
+    @Test
+    void getEpicSubtasks_ReturnCorrectEpicSubtasks_EpicSubtasksInStorage() {
+        final int id = taskManager.addNewEpic(epic);
+        Subtask newSub = new Subtask("SubName", "SubDescription", NEW, id);
+        final int subId = taskManager.addNewSubtask(newSub);
+        List<Integer> subtasks = new ArrayList<>();
+        subtasks.add(subId);
+        assertNotNull(epic.getSubtaskId(),"Подазадачи не возвращаются");
+        assertEquals(subtasks,epic.getSubtaskId(),"Задачи не возвращаются");
+    }
+
+    @Test
+    void getEpicSubtasksWithoutSubs_ReturnCorrectEpic_EpicInStorage() {
+        taskManager.addNewEpic(epic);
+        assertEquals(0,epic.getSubtaskId().size(),"Список не пустой");
+    }
+
+    @Test
+    void getPrioritizedTasks_ReturnCorrectPrioritizedTasks() {
+        Task task1 = new Task("Name", "Description", NEW,20,LocalDateTime.of(2022,1,1,1,1,1));
+        taskManager.addNewTask(task1);
+        final int id = taskManager.addNewEpic(epic);
+        Subtask sub1 = new Subtask("SubName", "SubDescription", NEW, id,20,LocalDateTime.of(2023,1,1,1,1,1));
+        Subtask sub2 = new Subtask("Sub2Name", "Sub2Description", NEW, id,30,LocalDateTime.of(2024,1,1,1,1,1));
+        taskManager.addNewSubtask(sub1);
+        taskManager.addNewSubtask(sub2);
+
+        ArrayList<Task> expectedTasks = new ArrayList<>();
+        expectedTasks.add(task1);
+        expectedTasks.add(sub1);
+        expectedTasks.add(sub2);
+
+        assertEquals(expectedTasks, taskManager.getPrioritizedTasks());
+    }
+
+    @Test
+    void addNewTask_ReturnCorrectTask_TaskInStorage() {
         final int taskId = taskManager.addNewTask(task);
 
         final Task savedTask = taskManager.getTask(taskId);
@@ -61,14 +159,15 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
 
+
     @Test
-    void addNewTaskIfNull() {
+    void addNewTaskIfNull_ReturnNull_TaskIsNotInStorage() {
         taskManager.addNewTask(null);
         assertEquals(0, taskManager.getTasks().size(), "Неверное количество задач");
     }
 
     @Test
-    void addNewSubtask() {
+    void addNewSubtask_ReturnCorrectSubtask_SubtaskInStorage() {
         taskManager.addNewEpic(epic);
         assertEquals(1, taskManager.getEpics().size(), "Важная задача отсутсвует");
         Subtask subtask = new Subtask("SubName", "SubDescription", NEW, epic.getId());
@@ -87,13 +186,13 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void addNewSubtaskIfNull() {
+    void addNewSubtaskIfNull_ReturnNull_SubtaskIsNotInStorage() {
         taskManager.addNewSubtask(null);
         assertEquals(0, taskManager.getSubtasks().size(), "Неверное количество подазадач");
     }
 
     @Test
-    void addNewEpic() {
+    void addNewEpic_ReturnCorrectEpic_EpicInStorage() {
         final int epicId = taskManager.addNewEpic(epic);
 
         final Epic savedEpic = taskManager.getEpic(epicId);
@@ -109,7 +208,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void addNewEpicIfNull() {
+    void addNewEpicIfNull_ReturnNull_EpicIsNotInStorage() {
         taskManager.addNewEpic(null);
         assertEquals(0, taskManager.getEpics().size(), "Неверное количество задач");
     }
@@ -320,7 +419,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
         taskManager.addNewSubtask(sub2);
-        taskManager.calculateEpicTime(testEpic);
         assertNotNull(testEpic.getStartTime(), "Время начала не найдено");
         assertEquals(testEpic.getStartTime(), sub1.getStartTime(), "Время начала не совпадает");
     }
@@ -332,7 +430,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
         taskManager.addNewSubtask(sub2);
-        taskManager.calculateEpicTime(testEpic);
         assertNotNull(testEpic.getEndTime(), "Время конца не найдено");
         assertEquals(testEpic.getEndTime(), sub2.getEndTime(), "Время конца не совпадает");
     }
@@ -344,7 +441,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1);
         taskManager.addNewSubtask(sub2);
-        taskManager.calculateEpicTime(testEpic);
         assertNull(testEpic.getStartTime(), "Время должно быть null");
         assertEquals(testEpic.getStartTime(), sub1.getStartTime(), "Время не совпадает");
     }
@@ -356,7 +452,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1);
         taskManager.addNewSubtask(sub2);
-        taskManager.calculateEpicTime(testEpic);
         assertNull(testEpic.getEndTime(), "Время должно быть null");
         assertEquals(testEpic.getEndTime(), sub2.getEndTime(), "Время не совпадает");
     }
@@ -368,7 +463,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
         taskManager.addNewSubtask(sub2);
-        taskManager.calculateEpicTime(testEpic);
         int expectedDuration = sub1.getDuration() + sub2.getDuration();
         int actualDuration = testEpic.getDuration();
         assertNotNull(actualDuration, "Длительность задачи не найдена");
@@ -382,7 +476,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.NEW, 3, 1);
         taskManager.addNewSubtask(sub2);
-        taskManager.calculateEpicTime(testEpic);
         int actualDuration = testEpic.getDuration();
         assertEquals(actualDuration, 0, "Время должно быть null");
         assertEquals(actualDuration, sub1.getDuration(), "Время не совпадает");
@@ -435,4 +528,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         taskManager.addNewSubtask(sub2);
         assertEquals(TaskStatus.IN_PROGRESS, testEpic.getStatus());
     }
+
+
 }
