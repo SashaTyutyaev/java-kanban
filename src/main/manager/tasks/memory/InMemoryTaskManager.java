@@ -1,6 +1,7 @@
 package main.manager.tasks.memory;
 
 import main.comparators.TaskComparator;
+import main.exceptions.ValidationException;
 import main.manager.Managers;
 import main.manager.history.HistoryManager;
 import main.manager.tasks.TaskManager;
@@ -21,7 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected static TreeSet<Task> taskTreeSet = new TreeSet<>(new TaskComparator());
     protected int generatorId = 0;
 
-    private int getNewIdentificator() {
+    protected int getNewIdentificator() {
         return ++generatorId;
     }
 
@@ -101,8 +102,8 @@ public class InMemoryTaskManager implements TaskManager {
                 return -1;
             }
             subtask.setId(id);
-            epic.addSubtaskId(subtask.getId());
             validateTimeInterception(subtask);
+            epic.addSubtaskId(subtask.getId());
             subtasks.put(id, subtask);
             updateEpicTime(epic);
             updateEpicStatus(subtask.getEpicId());
@@ -297,9 +298,9 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public void validateTimeInterception(Task task) {
-        for (Task expTask: taskTreeSet) {
-            if (Objects.equals(task.getId(),expTask.getId())) {
+    private void validateTimeInterception(Task task) {
+        for (Task expTask : taskTreeSet) {
+            if (Objects.equals(task.getId(), expTask.getId())) {
                 continue;
             }
             if (expTask.getStartTime() == null || task.getStartTime() == null) {
@@ -308,7 +309,7 @@ public class InMemoryTaskManager implements TaskManager {
             if (task.getEndTime().isBefore(expTask.getStartTime()) || task.getEndTime().equals(expTask.getStartTime())
                     || task.getStartTime().isAfter(expTask.getEndTime()) || task.getStartTime().equals(expTask.getEndTime())) {
             } else {
-                System.out.println("Задача не добавлена в приоритезированный список");
+                System.out.println("Задача не добавлена");
             }
         }
     }
