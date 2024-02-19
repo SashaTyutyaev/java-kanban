@@ -83,9 +83,13 @@ public class InMemoryTaskManager implements TaskManager {
         if (task != null) {
             int id = getNewIdentificator();
             task.setId(id);
-            validateTimeInterception(task);
-            tasks.put(id, task);
-            taskTreeSet.add(task);
+            try {
+                validateTimeInterception(task);
+                tasks.put(id, task);
+                taskTreeSet.add(task);
+            } catch (ValidationException e) {
+                System.out.println("Ошибка валидации!");
+            }
             return id;
         } else {
             return -1;
@@ -102,12 +106,16 @@ public class InMemoryTaskManager implements TaskManager {
                 return -1;
             }
             subtask.setId(id);
-            validateTimeInterception(subtask);
-            epic.addSubtaskId(subtask.getId());
-            subtasks.put(id, subtask);
-            updateEpicTime(epic);
-            updateEpicStatus(subtask.getEpicId());
-            taskTreeSet.add(subtask);
+            try {
+                validateTimeInterception(subtask);
+                epic.addSubtaskId(subtask.getId());
+                subtasks.put(id, subtask);
+                updateEpicTime(epic);
+                updateEpicStatus(subtask.getEpicId());
+                taskTreeSet.add(subtask);
+            } catch (ValidationException e) {
+                System.out.println("Ошибка валидации!");
+            }
             return id;
         } else {
             return -1;
@@ -134,9 +142,13 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         if (tasks.containsKey(task.getId())) {
-            validateTimeInterception(task);
-            tasks.put(task.getId(), task);
-            taskTreeSet.add(task);
+            try {
+                validateTimeInterception(task);
+                tasks.put(task.getId(), task);
+                taskTreeSet.add(task);
+            } catch (ValidationException e) {
+                System.out.println("Ошибка валидации!");
+            }
         }
     }
 
@@ -159,11 +171,15 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(subtask.getId())) {
             int epicId = subtasks.get(subtask.getId()).getEpicId();
             if (((Integer) subtask.getEpicId()).equals(epicId)) {
-                validateTimeInterception(subtask);
-                subtasks.put(subtask.getId(), subtask);
-                taskTreeSet.add(subtask);
-                updateEpicTime(epics.get(subtask.getEpicId()));
-                updateEpicStatus(subtask.getEpicId());
+                try {
+                    validateTimeInterception(subtask);
+                    subtasks.put(subtask.getId(), subtask);
+                    taskTreeSet.add(subtask);
+                    updateEpicTime(epics.get(subtask.getEpicId()));
+                    updateEpicStatus(subtask.getEpicId());
+                } catch (ValidationException e) {
+                    System.out.println("Ошибка валидации!");
+                }
             }
         }
     }
@@ -298,7 +314,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void validateTimeInterception(Task task) {
+    private void validateTimeInterception(Task task) throws ValidationException {
         for (Task expTask : taskTreeSet) {
             if (Objects.equals(task.getId(), expTask.getId())) {
                 continue;
@@ -309,7 +325,7 @@ public class InMemoryTaskManager implements TaskManager {
             if (task.getEndTime().isBefore(expTask.getStartTime()) || task.getEndTime().equals(expTask.getStartTime())
                     || task.getStartTime().isAfter(expTask.getEndTime()) || task.getStartTime().equals(expTask.getEndTime())) {
             } else {
-                System.out.println("Задача не добавлена");
+                throw new ValidationException("Задача не добавлена!");
             }
         }
     }

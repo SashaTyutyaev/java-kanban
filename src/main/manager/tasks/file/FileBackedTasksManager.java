@@ -99,7 +99,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     }
                 }
                 fb.generatorId = maxId + 1;
-
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка с файлом!");

@@ -520,16 +520,32 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldReturnCorrectSizeOfPrioritizedTasks() {
+    public void shouldReturnPrioritizedTasksWithTwoTasks() {
         taskManager.addNewEpic(testEpic);
         Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.DONE, 2, 1, 20, LocalDateTime.of(2024, 2, 7, 1, 1));
         taskManager.addNewSubtask(sub1);
         Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.DONE, 3, 1, 20, LocalDateTime.of(2024, 2, 7, 1, 1));
         taskManager.addNewSubtask(sub2);
         taskManager.addNewTask(task);
-        System.out.println(taskManager.getSubtasks().size());
 
         assertEquals(taskManager.getPrioritizedTasks().size(), 2);
+        assertEquals(taskManager.getSubtasks().size(), 1);
+        assertEquals(taskManager.getTasks().size(), 1);
+    }
+
+    @Test
+    public void shouldReturnPrioritizedTasksWithOnlyOneTask() {
+        taskManager.addNewEpic(testEpic);
+        Subtask sub1 = new Subtask("SubTest1", "SubTest1Description", TaskStatus.DONE, 2, 1, 20, LocalDateTime.of(2024, 2, 7, 1, 1));
+        taskManager.addNewSubtask(sub1);
+        Subtask sub2 = new Subtask("SubTest2", "SubTest2Description", TaskStatus.DONE, 3, 1, 20, LocalDateTime.of(2024, 2, 7, 1, 1));
+        taskManager.addNewSubtask(sub2);
+        Task task1 = new Task("taskName", "taskDescription", NEW, 30, LocalDateTime.of(2024, 2, 7, 1, 1));
+        taskManager.addNewTask(task1);
+
+        assertEquals(taskManager.getPrioritizedTasks().size(), 1);
+        assertEquals(taskManager.getSubtasks().size(), 1);
+        assertEquals(taskManager.getTasks().size(), 0);
     }
 
 

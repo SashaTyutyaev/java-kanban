@@ -1,6 +1,8 @@
 package main.exceptions;
 
-public class ValidationException extends RuntimeException {
+import java.io.IOException;
+
+public class ValidationException extends IOException {
     public ValidationException() {};
 
     public ValidationException(String message) {
