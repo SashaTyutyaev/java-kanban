@@ -1,14 +1,13 @@
 package main.tests;
 
-import main.manager.history.InMemoryHistoryManager;
 import main.manager.tasks.TaskManager;
+import main.tasks.Epic;
+import main.tasks.Subtask;
+import main.tasks.Task;
 import main.tasks.TaskStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import main.tasks.Epic;
-import main.tasks.Subtask;
-import main.tasks.Task;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,21 +16,16 @@ import java.util.List;
 import static main.tasks.TaskStatus.DONE;
 import static main.tasks.TaskStatus.NEW;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 abstract class TaskManagerTest<T extends TaskManager> {
 
-    public T taskManager;
-    protected Task task;
-    protected Epic epic;
-    protected Epic epicWithNewAndDoneSub;
-    protected Epic epicWithNewSubs;
-    protected Epic epicWithDoneSubs;
-    private InMemoryHistoryManager historyManager;
-    protected Epic testEpic = new Epic("EpicTest1", "EpicTestDescription1", TaskStatus.NEW, 1);
-    private Task task1;
-    private Task task2;
-    private Task task3;
+    protected T taskManager;
+    private Task task;
+    private Epic epic;
+    private Epic epicWithNewAndDoneSub;
+    private Epic epicWithNewSubs;
+    private Epic epicWithDoneSubs;
+    private Epic testEpic = new Epic("EpicTest1", "EpicTestDescription1", TaskStatus.NEW, 1);
 
     @BeforeEach
     void beforeEach() {
@@ -40,10 +34,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         epicWithNewAndDoneSub = new Epic("EpicName", "EpicDescription", NEW);
         epicWithDoneSubs = new Epic("Epic2Name", "Epic2Description", NEW);
         epicWithNewSubs = new Epic("Epic3Name", "Epic3Description", NEW);
-        historyManager = new InMemoryHistoryManager();
-        task1 = new Task("task1Name","task1Description", TaskStatus.NEW,1);
-        task2 = new Task("task2Name","task2Description", TaskStatus.NEW,2);
-        task3 = new Task("task3Name","task3Description", TaskStatus.NEW,3);
     }
 
     @AfterEach
@@ -558,87 +548,24 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void shouldReturnHistoryWithOneTask() {
-        historyManager.add(task1);
-        final List<Task> history = historyManager.getHistory();
-        assertNotNull(history, "История пустая.");
-        assertEquals(1, history.size(), "История пустая.");
-    }
-
-    @Test
-    void shouldReturnHistoryWithoutTasks() {
-        assertNotNull(historyManager.getHistory(),"История не пустая");
-        assertEquals(0,historyManager.getHistory().size(),"История пустая");
-    }
-
-    @Test
-    void shouldCorrectlyAddTaskIfOneDuplicatedTask() {
-        historyManager.add(task1);
-        historyManager.add(task1);
-        assertNotNull(historyManager.getHistory(),"История пустая");
-        assertEquals(1,historyManager.getHistory().size(),"Неверная история просмотра");
-    }
-
-    @Test
-    void shouldCorrectlyAddTasksIfManyDuplicatedTasks() {
-        historyManager.add(task1);
-        historyManager.add(task1);
-        historyManager.add(task2);
-        historyManager.add(task2);
-        assertNotNull(historyManager.getHistory(),"История пустая");
-        assertEquals(2,historyManager.getHistory().size(),"Неверная история просмотра");
-    }
-
-    @Test
-    void shouldRemoveFirstTaskFromHistory() {
-        historyManager.add(task1);
-        historyManager.add(task2);
-        historyManager.add(task3);
-        historyManager.remove(task1.getId());
-        assertNotNull(historyManager.getHistory(),"История пустая");
-        assertEquals(2,historyManager.getHistory().size(),"Неверная история просмотра");
-        assertEquals(task2,historyManager.getHistory().get(1));
-        assertEquals(task3,historyManager.getHistory().get(0));
-    }
-
-    @Test
-    void shouldRemoveMidTaskFromHistory() {
-        historyManager.add(task1);
-        historyManager.add(task2);
-        historyManager.add(task3);
-        historyManager.remove(task2.getId());
-        assertNotNull(historyManager.getHistory(),"История пустая");
-        assertEquals(2,historyManager.getHistory().size(),"Неверная история просмотра");
-        assertEquals(task1,historyManager.getHistory().get(1));
-        assertEquals(task3,historyManager.getHistory().get(0));
-    }
-
-    @Test
-    void shouldRemoveLastTaskFromHistory() {
-        historyManager.add(task1);
-        historyManager.add(task2);
-        historyManager.add(task3);
-        historyManager.remove(task3.getId());
-        assertNotNull(historyManager.getHistory(),"История пустая");
-        assertEquals(2,historyManager.getHistory().size(),"Неверная история просмотра");
-        assertEquals(task1,historyManager.getHistory().get(1));
-        assertEquals(task2,historyManager.getHistory().get(0));
-    }
-
-    @Test
-    void shouldReturnCorrectHistoryWithThreeTasks() {
-        historyManager.add(task1);
-        historyManager.add(task2);
-        historyManager.add(task3);
+    void getHistory() {
+        Task task1 = new Task("task1Name", "task1Description", TaskStatus.NEW, 1);
+        Task task2 = new Task("task2Name", "task2Description", TaskStatus.NEW, 2);
+        Task task3 = new Task("task3Name", "task3Description", TaskStatus.NEW, 3);
+        taskManager.addNewTask(task1);
+        taskManager.addNewTask(task2);
+        taskManager.addNewTask(task3);
+        taskManager.getTask(task1.getId());
+        taskManager.getTask(task2.getId());
+        taskManager.getTask(task3.getId());
 
         List<Task> history = new ArrayList<>();
         history.add(task3);
         history.add(task2);
         history.add(task1);
 
-        assertNotNull(historyManager.getHistory(),"История пустая");
-        assertEquals(history,historyManager.getHistory(),"История не совпадает");
+        assertNotNull(taskManager.getHistory(), "История пустая");
+        assertEquals(history, taskManager.getHistory(), "История не совпадает");
     }
-
 
 }

@@ -70,11 +70,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                                     maxId = epic.getId();
                                 }
                                 epics.put(epic.getId(), epic);
-                                for (Subtask sub : subtasks.values()) {
-                                    if (sub.getEpicId() == epic.getId()) {
-                                        epics.get(sub.getEpicId()).addSubtaskId(sub.getId());
-                                    }
-                                }
                                 break;
                             case SUBTASK:
                                 Subtask subtask = Converter.subFromString(line);
@@ -100,6 +95,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
                 fb.generatorId = maxId + 1;
             }
+            for (Subtask sub : subtasks.values()) {
+                epics.get(sub.getEpicId()).addSubtaskId(sub.getId());
+            }
+
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка с файлом!");
         }
@@ -181,9 +180,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
         final FileBackedTasksManager fb = new FileBackedTasksManager(Path.of("src/resources/tasks.csv"));
-        Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW,30, LocalDateTime.of(2024,2,11,10,1,1));
-        Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS,30, LocalDateTime.of(2024,2,11,11,1,1));
-        Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS,30, LocalDateTime.of(2024,2,11,12,1,1));
+        Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW, 30, LocalDateTime.of(2024, 2, 11, 10, 1, 1));
+        Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS, 30, LocalDateTime.of(2024, 2, 11, 11, 1, 1));
+        Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS, 30, LocalDateTime.of(2024, 2, 11, 12, 1, 1));
         fb.addNewTask(task1);
         fb.getTask(task1.getId());
         fb.addNewTask(task2);
@@ -196,10 +195,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fb.getEpic(epic1.getId());
         fb.addNewEpic(epic2);
         fb.getEpic(epic2.getId());
-        Subtask subtask1 = new Subtask("Subtask #1-1", "Subtask1 description", TaskStatus.NEW, epic1.getId(),30, LocalDateTime.of(2024,2,11,13,1,1));
-        Subtask subtask2 = new Subtask("Subtask #2-1", "Subtask2 description", TaskStatus.NEW, epic2.getId(),30, LocalDateTime.of(2024,2,11,14,1,1));
-        Subtask subtask3 = new Subtask("Subtask #3-1", "Subtask3 description", TaskStatus.NEW, epic1.getId(),30, LocalDateTime.of(2024,2,11,15,1,1));
-        Subtask subtask4 = new Subtask("Subtask #4-1", "Subtask3 description", TaskStatus.NEW, epic2.getId(),90, LocalDateTime.of(2024,2,11,16,1,1));
+        Subtask subtask1 = new Subtask("Subtask #1-1", "Subtask1 description", TaskStatus.NEW, epic1.getId(), 30, LocalDateTime.of(2024, 2, 11, 13, 1, 1));
+        Subtask subtask2 = new Subtask("Subtask #2-1", "Subtask2 description", TaskStatus.NEW, epic2.getId(), 30, LocalDateTime.of(2024, 2, 11, 14, 1, 1));
+        Subtask subtask3 = new Subtask("Subtask #3-1", "Subtask3 description", TaskStatus.NEW, epic1.getId(), 30, LocalDateTime.of(2024, 2, 11, 15, 1, 1));
+        Subtask subtask4 = new Subtask("Subtask #4-1", "Subtask3 description", TaskStatus.NEW, epic2.getId(), 90, LocalDateTime.of(2024, 2, 11, 16, 1, 1));
         fb.addNewSubtask(subtask1);
         fb.getSubtask(subtask1.getId());
         fb.addNewSubtask(subtask2);
@@ -207,8 +206,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fb.addNewSubtask(subtask4);
         fb.getSubtask(subtask4.getId());
         FileBackedTasksManager fb2 = loadFromFile(new File("src/resources/tasks.csv"));
-        Task task4 = new Task("Task #4", "Task4 description", TaskStatus.IN_PROGRESS,30, LocalDateTime.of(2024,3,3,1,1,1));
-        Task task5 = new Task("Task #5", "Task5 description", TaskStatus.IN_PROGRESS,30, LocalDateTime.of(2024,2,2,1,1,1));
+        Task task4 = new Task("Task #4", "Task4 description", TaskStatus.IN_PROGRESS, 30, LocalDateTime.of(2024, 3, 3, 1, 1, 1));
+        Task task5 = new Task("Task #5", "Task5 description", TaskStatus.IN_PROGRESS, 30, LocalDateTime.of(2024, 2, 2, 1, 1, 1));
         fb2.addNewTask(task4);
         fb2.addNewTask(task5);
         fb2.addNewSubtask(subtask3);

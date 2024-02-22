@@ -322,8 +322,7 @@ public class InMemoryTaskManager implements TaskManager {
             if (expTask.getStartTime() == null || task.getStartTime() == null) {
                 break;
             }
-            if (task.getEndTime().isBefore(expTask.getStartTime()) || task.getEndTime().equals(expTask.getStartTime())
-                    || task.getStartTime().isAfter(expTask.getEndTime()) || task.getStartTime().equals(expTask.getEndTime())) {
+            if (task.getEndTime().isBefore(expTask.getStartTime()) || task.getEndTime().equals(expTask.getStartTime()) || task.getStartTime().isAfter(expTask.getEndTime()) || task.getStartTime().equals(expTask.getEndTime())) {
             } else {
                 throw new ValidationException("Задача не добавлена!");
             }

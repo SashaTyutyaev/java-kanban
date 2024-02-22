@@ -1,6 +1,7 @@
 package main.tests;
 
 import main.manager.tasks.file.FileBackedTasksManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import main.tasks.Epic;
@@ -18,6 +19,10 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     void beforeEach() {
         super.beforeEach();
         taskManager = new FileBackedTasksManager(new File("src/resources/testTasks.csv").toPath());
+    }
+
+    @AfterEach
+    void afterEach() {
         taskManager.deleteAllTasks();
         taskManager.deleteAllEpics();
         taskManager.deleteAllSubtasks();
@@ -26,9 +31,12 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     @Test
     void save() {
         FileBackedTasksManager fb = new FileBackedTasksManager(new File("src/resources/testTasks2.csv").toPath());
-        Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW, 30, LocalDateTime.of(2024, 2, 11, 15, 0, 0));
-        Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS, 30, LocalDateTime.of(2024, 2, 11, 16, 0, 0));
-        Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS, 30, LocalDateTime.of(2024, 2, 11, 17, 0, 0));
+        Task task1 = new Task("Task #1", "Task1 description", TaskStatus.NEW, 30,
+                LocalDateTime.of(2024, 2, 11, 15, 0, 0));
+        Task task2 = new Task("Task #2", "Task2 description", TaskStatus.IN_PROGRESS, 30,
+                LocalDateTime.of(2024, 2, 11, 16, 0, 0));
+        Task task3 = new Task("Task #3", "Task3 description", TaskStatus.IN_PROGRESS, 30,
+                LocalDateTime.of(2024, 2, 11, 17, 0, 0));
         fb.addNewTask(task1);
         fb.getTask(task1.getId());
         fb.addNewTask(task2);
@@ -41,8 +49,10 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
         fb.getEpic(epic1.getId());
         fb.addNewEpic(epic2);
         fb.getEpic(epic2.getId());
-        Subtask subtask1 = new Subtask("Subtask #1-1", "Subtask1 description", TaskStatus.NEW, epic1.getId(), 30, LocalDateTime.of(2024, 1, 1, 1, 1, 1));
-        Subtask subtask2 = new Subtask("Subtask #2-1", "Subtask2 description", TaskStatus.NEW, epic2.getId(), 40, LocalDateTime.of(2023, 1, 1, 1, 1, 1));
+        Subtask subtask1 = new Subtask("Subtask #1-1", "Subtask1 description", TaskStatus.NEW, epic1.getId(),
+                30, LocalDateTime.of(2024, 1, 1, 1, 1, 1));
+        Subtask subtask2 = new Subtask("Subtask #2-1", "Subtask2 description", TaskStatus.NEW, epic2.getId(),
+                40, LocalDateTime.of(2023, 1, 1, 1, 1, 1));
         fb.addNewSubtask(subtask1);
         fb.getSubtask(subtask1.getId());
         fb.addNewSubtask(subtask2);
