@@ -13,31 +13,31 @@ public class Converter {
 
     public static String taskToString(Task task) {
         if (task.getStartTime() != null) {
-            return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," +
+            return task.getId() + "," + task.getEpicType() + "," + task.getName() + "," + task.getStatus() + "," +
                     task.getDescription() + "," + task.getDuration() + "," + task.getStartTime().format(formatter) + ",";
         } else {
-            return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," +
+            return task.getId() + "," + task.getEpicType() + "," + task.getName() + "," + task.getStatus() + "," +
                     task.getDescription() + ",";
         }
     }
 
     public static String taskToString(Epic epic) {
         if (epic.getStartTime() != null ) {
-            return epic.getId() + "," + epic.getType() + "," + epic.getName() + "," + epic.getStatus() + "," +
+            return epic.getId() + "," + epic.getEpicType() + "," + epic.getName() + "," + epic.getStatus() + "," +
                     epic.getDescription() + "," + epic.getDuration() + "," + epic.getStartTime().format(formatter) + ",";
         }
         else {
-            return epic.getId() + "," + epic.getType() + "," + epic.getName() + "," + epic.getStatus() + "," +
+            return epic.getId() + "," + epic.getEpicType() + "," + epic.getName() + "," + epic.getStatus() + "," +
                     epic.getDescription() + ",";
         }
     }
 
     public static String taskToString(Subtask subtask) {
         if (subtask.getStartTime() != null) {
-            return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + subtask.getStatus() + "," +
+            return subtask.getId() + "," + subtask.getEpicType() + "," + subtask.getName() + "," + subtask.getStatus() + "," +
                     subtask.getDescription() + "," + subtask.getEpicId() + "," + subtask.getDuration() + "," + subtask.getStartTime().format(formatter) + ",";
         } else {
-            return subtask.getId() + "," + subtask.getType() + "," + subtask.getName() + "," + subtask.getStatus() + "," +
+            return subtask.getId() + "," + subtask.getEpicType() + "," + subtask.getName() + "," + subtask.getStatus() + "," +
                     subtask.getDescription() + "," + subtask.getEpicId() + ",";
         }
     }

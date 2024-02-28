@@ -25,7 +25,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     private Epic epicWithNewAndDoneSub;
     private Epic epicWithNewSubs;
     private Epic epicWithDoneSubs;
-    private Epic testEpic = new Epic("EpicTest1", "EpicTestDescription1", TaskStatus.NEW, 1);
+    private Epic testEpic;
 
     @BeforeEach
     void beforeEach() {
@@ -34,6 +34,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         epicWithNewAndDoneSub = new Epic("EpicName", "EpicDescription", NEW);
         epicWithDoneSubs = new Epic("Epic2Name", "Epic2Description", NEW);
         epicWithNewSubs = new Epic("Epic3Name", "Epic3Description", NEW);
+        testEpic = new Epic("EpicTest1", "EpicTestDescription1", TaskStatus.NEW, 1);
     }
 
     @AfterEach
@@ -41,6 +42,25 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.deleteAllEpics();
         taskManager.deleteAllTasks();
         taskManager.deleteAllSubtasks();
+
+
+    }
+    @Test
+    void getHistory() {
+        taskManager.addNewTask(task);
+        taskManager.addNewEpic(epic);
+        taskManager.addNewEpic(epicWithDoneSubs);
+        taskManager.getTask(task.getId());
+        taskManager.getEpic(epic.getId());
+        taskManager.getEpic(epicWithDoneSubs.getId());
+
+        List<Task> history = new ArrayList<>();
+        history.add(epicWithDoneSubs);
+        history.add(epic);
+        history.add(task);
+
+        assertNotNull(taskManager.getHistory(), "История пустая");
+        assertEquals(history, taskManager.getHistory(), "История не совпадает");
     }
 
     @Test
@@ -547,25 +567,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(taskManager.getTasks().size(), 0);
     }
 
-    @Test
-    void getHistory() {
-        Task task1 = new Task("task1Name", "task1Description", TaskStatus.NEW, 1);
-        Task task2 = new Task("task2Name", "task2Description", TaskStatus.NEW, 2);
-        Task task3 = new Task("task3Name", "task3Description", TaskStatus.NEW, 3);
-        taskManager.addNewTask(task1);
-        taskManager.addNewTask(task2);
-        taskManager.addNewTask(task3);
-        taskManager.getTask(task1.getId());
-        taskManager.getTask(task2.getId());
-        taskManager.getTask(task3.getId());
 
-        List<Task> history = new ArrayList<>();
-        history.add(task3);
-        history.add(task2);
-        history.add(task1);
-
-        assertNotNull(taskManager.getHistory(), "История пустая");
-        assertEquals(history, taskManager.getHistory(), "История не совпадает");
-    }
 
 }

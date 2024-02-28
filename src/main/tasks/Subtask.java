@@ -7,7 +7,7 @@ public class Subtask extends Task {
 
 
     private int epicId;
-    private TaskType type = TaskType.SUBTASK;
+    private TaskType subtaskType = TaskType.SUBTASK;
 
     public Subtask(String name, String description, TaskStatus status, int id, int epicId) {
         super(name, description, status, id);
@@ -36,8 +36,8 @@ public class Subtask extends Task {
 
 
     @Override
-    public String getType() {
-        return type.toString();
+    public String getEpicType() {
+        return subtaskType.toString();
     }
 
     @Override

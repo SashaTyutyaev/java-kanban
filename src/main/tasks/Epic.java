@@ -7,11 +7,11 @@ import java.util.Objects;
 public class Epic extends Task {
 
     private ArrayList<Integer> subtaskId = new ArrayList<>();
-    private TaskType type = TaskType.EPIC;
+    private TaskType epicType = TaskType.EPIC;
     private LocalDateTime endTime;
     @Override
-    public String getType() {
-        return type.toString();
+    public String getEpicType() {
+        return epicType.toString();
     }
 
 

@@ -1,6 +1,7 @@
 id,type,name,status,description,epic,duration,startTime
-1,TASK,task1Name,NEW,task1Description,
-2,TASK,task2Name,NEW,task2Description,
-3,TASK,task3Name,NEW,task3Description,
+1,TASK,Name,NEW,Description,20,2024-01-09 01:01,
+3,SUBTASK,SubName,NEW,SubDescription,2,20,2024-01-10 01:01,
+4,SUBTASK,Sub2Name,NEW,Sub2Description,2,30,2024-01-11 01:01,
+2,EPIC,epicName,NEW,epicDescription,50,2024-01-10 01:01,
 
 3,2,1

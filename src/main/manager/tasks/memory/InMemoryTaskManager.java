@@ -15,12 +15,12 @@ import java.util.*;
 import static main.tasks.TaskStatus.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    protected static final HashMap<Integer, Task> tasks = new HashMap<>();
-    protected static final HashMap<Integer, Epic> epics = new HashMap<>();
-    protected static final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected static HashMap<Integer, Task> tasks = new HashMap<>();
+    protected static HashMap<Integer, Epic> epics = new HashMap<>();
+    protected static HashMap<Integer, Subtask> subtasks = new HashMap<>();
     protected static final HistoryManager historyManager = Managers.getDefaultHistory();
     protected static TreeSet<Task> taskTreeSet = new TreeSet<>(new TaskComparator());
-    protected int generatorId = 0;
+    public int generatorId = 0;
 
     protected int getNewIdentificator() {
         return ++generatorId;
@@ -59,6 +59,14 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public ArrayList<Subtask> getSubtasks() {
         return new ArrayList<>(subtasks.values());
+    }
+
+    public List<Task> getAllTasks() {
+        ArrayList<Task> list = new ArrayList<>();
+        list.addAll(tasks.values());
+        list.addAll(subtasks.values());
+        list.addAll(epics.values());
+        return list;
     }
 
     @Override

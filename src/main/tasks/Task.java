@@ -1,5 +1,6 @@
 package main.tasks;
 
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -41,6 +42,15 @@ public class Task {
         this.status = status;
         this.duration = duration;
         this.startTime = startTime;
+    }
+
+    public Task(Task task) {
+        this.name = task.name;
+        this.description = task.description;
+        this.status = task.status;
+        this.id = task.id;
+        this.duration = task.duration;
+        this.startTime = task.startTime;
     }
 
     public int getDuration() {
@@ -91,9 +101,10 @@ public class Task {
         this.id = id;
     }
 
-    public String getType() {
+    public String getEpicType() {
         return type.toString();
     }
+
 
     @Override
     public boolean equals(Object o) {
