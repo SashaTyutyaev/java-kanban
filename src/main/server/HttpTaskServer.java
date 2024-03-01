@@ -80,18 +80,13 @@ public class HttpTaskServer {
         try {
             String path = h.getRequestURI().getPath();
             String method = h.getRequestMethod();
+            String query = h.getRequestURI().getQuery();
 
             switch (method) {
                 case "GET":
-                    if (Pattern.matches("^/tasks/task$", path)) {
-                        String response = gson.toJson(taskManager.getTasks());
-                        sendText(h, response);
-                        break;
-                    }
-
-                    if (Pattern.matches("/tasks/task/?id=\\d+$", path)) {
-                        String pathId = path.replaceFirst("/tasks/task/?id=", "");
-                        int id = parsePathId(pathId);
+                    if (query != null) {
+                        String queryId = query.substring(3);
+                        int id = parsePathId(queryId);
                         if (id != -1) {
                             String response = gson.toJson(taskManager.getTask(id));
                             sendText(h, response);
@@ -100,6 +95,10 @@ public class HttpTaskServer {
                             System.out.println("Получен неккоретный id - " + id);
                             h.sendResponseHeaders(405, 0);
                         }
+                    } else {
+                        String response = gson.toJson(taskManager.getTasks());
+                        sendText(h, response);
+                        break;
                     }
                     break;
 
@@ -107,36 +106,36 @@ public class HttpTaskServer {
                     InputStream inputStream = h.getRequestBody();
                     String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                     Task task = gson.fromJson(body, Task.class);
-                    if (Pattern.matches("^/tasks/task/?id=\\d+$", path)) {
+
+                    if (query != null) {
                         taskManager.updateTask(task);
                         System.out.println("Обновили задачу под идентификатором - " + task.getId());
                     } else {
                         taskManager.addNewTask(task);
                         System.out.println("Добавили новую задачу типа TASK");
-                        break;
                     }
+                    h.sendResponseHeaders(201, 0);
+                    break;
 
                 case "DELETE":
-                    if (Pattern.matches("^/tasks/task$", path)) {
+                    if (query == null) {
                         taskManager.deleteAllTasks();
                         System.out.println("Удалили все задачи типа TASK");
                         h.sendResponseHeaders(200, 0);
                         break;
-                    }
-
-                    if (Pattern.matches("^/tasks/task/?id=\\d$", path)) {
-                        String pathId = path.replaceFirst("/tasks/task/?id=", "");
-                        int id = parsePathId(pathId);
+                    } else {
+                        String queryId = query.substring(3);
+                        int id = parsePathId(queryId);
                         if (id != -1) {
                             taskManager.deleteTask(id);
                             System.out.println("Удалили задачу под идентификатором - " + id);
+                            h.sendResponseHeaders(200, 0);
                             break;
                         } else {
                             System.out.println("Получен неккоретный id - " + id);
                             h.sendResponseHeaders(405, 0);
                         }
                     }
-                    break;
                 default:
                     System.out.println("Ожидается GET/POST/DELETE запрос, получен неккоректный запрос " + method);
             }
@@ -151,18 +150,13 @@ public class HttpTaskServer {
         try {
             String path = h.getRequestURI().getPath();
             String method = h.getRequestMethod();
+            String query = h.getRequestURI().getQuery();
 
             switch (method) {
                 case "GET":
-                    if (Pattern.matches("^/tasks/epic$", path)) {
-                        String response = gson.toJson(taskManager.getEpics());
-                        sendText(h, response);
-                        break;
-                    }
-
-                    if (Pattern.matches("/tasks/epic/?id=\\d+$", path)) {
-                        String pathId = path.replaceFirst("/tasks/epic/?id=", "");
-                        int id = parsePathId(pathId);
+                    if (query != null) {
+                        String queryId = query.substring(3);
+                        int id = parsePathId(queryId);
                         if (id != -1) {
                             String response = gson.toJson(taskManager.getEpic(id));
                             sendText(h, response);
@@ -171,6 +165,10 @@ public class HttpTaskServer {
                             System.out.println("Получен неккоретный id - " + id);
                             h.sendResponseHeaders(405, 0);
                         }
+                    } else {
+                        String response = gson.toJson(taskManager.getEpics());
+                        sendText(h, response);
+                        break;
                     }
                     break;
 
@@ -178,34 +176,36 @@ public class HttpTaskServer {
                     InputStream inputStream = h.getRequestBody();
                     String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                     Epic task = gson.fromJson(body, Epic.class);
-                    if (Pattern.matches("^/tasks/epic/?id=\\d+$", path)) {
+                    if (query != null) {
                         taskManager.updateEpic(task);
                         System.out.println("Обновили задачу под идентификатором - " + task.getId());
+                        h.sendResponseHeaders(201, 0);
+                        break;
                     } else {
                         taskManager.addNewEpic(task);
+                        h.sendResponseHeaders(201, 0);
                         System.out.println("Добавили новую задачу типа EPIC");
                     }
                     break;
 
                 case "DELETE":
-                    if (Pattern.matches("^/tasks/epic$", path)) {
-                        taskManager.deleteAllEpics();
-                        System.out.println("Удалили все задачи типа EPIC");
-                        h.sendResponseHeaders(200, 0);
-                        break;
-                    }
-
-                    if (Pattern.matches("^/tasks/epic/?id=\\d$", path)) {
-                        String pathId = path.replaceFirst("/tasks/epic/?id=", "");
-                        int id = parsePathId(pathId);
+                    if (query != null) {
+                        String queryId = query.substring(3);
+                        int id = parsePathId(queryId);
                         if (id != -1) {
                             taskManager.deleteEpic(id);
                             System.out.println("Удалили задачу под идентификатором - " + id);
+                            h.sendResponseHeaders(200, 0);
                             break;
                         } else {
                             System.out.println("Получен неккоретный id - " + id);
                             h.sendResponseHeaders(405, 0);
                         }
+                    } else {
+                        taskManager.deleteAllEpics();
+                        System.out.println("Удалили все задачи типа EPIC");
+                        h.sendResponseHeaders(200, 0);
+                        break;
                     }
                     break;
                 default:
@@ -220,20 +220,14 @@ public class HttpTaskServer {
 
     private void handleSubtask(HttpExchange h) {
         try {
-            String path = h.getRequestURI().getPath();
             String method = h.getRequestMethod();
+            String query = h.getRequestURI().getQuery();
 
             switch (method) {
                 case "GET":
-                    if (Pattern.matches("^/tasks/subtask$", path)) {
-                        String response = gson.toJson(taskManager.getSubtasks());
-                        sendText(h, response);
-                        break;
-                    }
-
-                    if (Pattern.matches("/tasks/subtask/?id=\\d+$", path)) {
-                        String pathId = path.replaceFirst("/tasks/subtask/?id=", "");
-                        int id = parsePathId(pathId);
+                    if (query != null) {
+                        String queryId = query.substring(3);
+                        int id = parsePathId(queryId);
                         if (id != -1) {
                             String response = gson.toJson(taskManager.getSubtask(id));
                             sendText(h, response);
@@ -242,6 +236,10 @@ public class HttpTaskServer {
                             System.out.println("Получен неккоретный id - " + id);
                             h.sendResponseHeaders(405, 0);
                         }
+                    } else {
+                        String response = gson.toJson(taskManager.getSubtasks());
+                        sendText(h, response);
+                        break;
                     }
                     break;
 
@@ -249,34 +247,35 @@ public class HttpTaskServer {
                     InputStream inputStream = h.getRequestBody();
                     String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                     Subtask task = gson.fromJson(body, Subtask.class);
-                    if (Pattern.matches("^/tasks/subtask/?id=\\d+$", path)) {
+                    if (query != null) {
                         taskManager.updateSubtask(task);
+                        h.sendResponseHeaders(201, 0);
                         System.out.println("Обновили задачу под идентификатором - " + task.getId());
                     } else {
                         taskManager.addNewSubtask(task);
+                        h.sendResponseHeaders(201, 0);
                         System.out.println("Добавили новую задачу типа SUBTASK");
                         break;
                     }
 
                 case "DELETE":
-                    if (Pattern.matches("^/tasks/subtask$", path)) {
-                        taskManager.deleteAllSubtasks();
-                        System.out.println("Удалили все задачи типа SUBTASK");
-                        h.sendResponseHeaders(200, 0);
-                        break;
-                    }
-
-                    if (Pattern.matches("^/tasks/subtask/?id=\\d$", path)) {
-                        String pathId = path.replaceFirst("/tasks/subtask/?id=", "");
-                        int id = parsePathId(pathId);
+                    if (query != null) {
+                        String queryId = query.substring(3);
+                        int id = parsePathId(queryId);
                         if (id != -1) {
                             taskManager.deleteSubtask(id);
                             System.out.println("Удалили задачу под идентификатором - " + id);
+                            h.sendResponseHeaders(200, 0);
                             break;
                         } else {
                             System.out.println("Получен неккоретный id - " + id);
                             h.sendResponseHeaders(405, 0);
                         }
+                    } else {
+                        taskManager.deleteAllSubtasks();
+                        System.out.println("Удалили все задачи типа SUBTASK");
+                        h.sendResponseHeaders(200, 0);
+                        break;
                     }
                     break;
                 default:
@@ -314,18 +313,32 @@ public class HttpTaskServer {
 
     private void handleSubtaskByEpicId(HttpExchange h) {
         try {
-            String path = h.getRequestURI().getPath();
             String method = h.getRequestMethod();
+            String query = h.getRequestURI().getQuery();
 
             switch (method) {
                 case "GET":
-                    if (Pattern.matches("^/tasks/subtask/epic/?id=\\d$", path)) {
-                        String pathId = path.replaceFirst("/tasks/subtask/epic/?id=", "");
-                        int id = parsePathId(pathId);
+                    if (query != null) {
+                        String queryId = query.substring(3);
+                        int id = parsePathId(queryId);
                         if (id != -1) {
                             List<Subtask> subs = taskManager.getEpicSubtasks(id);
                             String response = gson.toJson(subs);
                             sendText(h, response);
+                            break;
+                        } else {
+                            System.out.println("Получен неккоретный id - " + id);
+                            h.sendResponseHeaders(405, 0);
+                        }
+                    }
+                case "DELETE":
+                    if (query != null) {
+                        String queryId = query.substring(3);
+                        int id = parsePathId(queryId);
+                        if (id != -1) {
+                            taskManager.getEpic(id).cleanSubtaskId();
+                            System.out.println("Удалили все SUBTASK у EPIC под идентификатором - " + id);
+                            h.sendResponseHeaders(200, 0);
                             break;
                         } else {
                             System.out.println("Получен неккоретный id - " + id);
