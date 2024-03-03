@@ -48,6 +48,9 @@ class HttpTaskServerTest {
     void afterEach() {
         taskServer.stop();
         kvServer.stop();
+        taskManager.deleteAllSubtasks();
+        taskManager.deleteAllTasks();
+        taskManager.deleteAllEpics();
     }
 
     @Test
@@ -695,7 +698,15 @@ class HttpTaskServerTest {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+        /*HttpRequest getRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:5000/tasks/task/?id=1"))
+                .build();
+
+        HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());*/
+
         assertEquals(201, response.statusCode());
+//        assertEquals(200, getResponse.statusCode());
 
         Task task2 = new Task("Task2Name", "Task2Description", TaskStatus.NEW, 2);
         String jsonTask2 = gson.toJson(task2);
@@ -710,19 +721,27 @@ class HttpTaskServerTest {
 
         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
 
+       /* HttpRequest getRequest2 = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:5000/tasks/task/?id=2"))
+                .build();
+
+        HttpResponse<String> getResponse2 = client.send(getRequest2, HttpResponse.BodyHandlers.ofString());*/
+
         assertEquals(201, response2.statusCode());
+//        assertEquals(200, getResponse2.statusCode());
 
         URI uri = URI.create("http://localhost:5000/tasks/task/?id=" + task2.getId());
 
-        final HttpRequest getRequest = HttpRequest.newBuilder()
+        final HttpRequest delRequest = HttpRequest.newBuilder()
                 .DELETE()
                 .uri(uri)
                 .build();
 
-        HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> delResponse = client.send(delRequest, HttpResponse.BodyHandlers.ofString());
 
 
-        assertEquals(200, getResponse.statusCode());
+        assertEquals(200, delResponse.statusCode());
         assertFalse(taskManager.getTasks().contains(task2));
     }
 

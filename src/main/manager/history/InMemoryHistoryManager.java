@@ -26,10 +26,4 @@ public class InMemoryHistoryManager implements HistoryManager {
         customLinkedList.removeTask(id);
     }
 
-    /*@Override
-    public void removeAll() {
-        customLinkedList.nodeMap.clear();
-        customLinkedList.getTasks().clear();
-    }*/
-
 }
