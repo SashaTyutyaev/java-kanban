@@ -1,7 +1,7 @@
 package main.tests;
 
-import main.manager.HttpTaskManager;
 import main.manager.Managers;
+import main.manager.tasks.http.HttpTaskManager;
 import main.server.KVServer;
 import main.tasks.Epic;
 import main.tasks.Subtask;
@@ -16,20 +16,23 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HttpTaskManagerTest {
+public class HttpTaskManagerTest extends TaskManagerTest<HttpTaskManager> {
     private HttpTaskManager httpTaskManager;
     private KVServer kVServer;
 
 
     @BeforeEach
     void beforeEach() throws IOException, InterruptedException {
+        super.beforeEach();
         kVServer = new KVServer();
         kVServer.start();
         httpTaskManager = (HttpTaskManager) Managers.getDefault();
+        taskManager = httpTaskManager;
     }
 
     @AfterEach
     void afterEach() {
+        super.afterEach();
         kVServer.stop();
     }
 

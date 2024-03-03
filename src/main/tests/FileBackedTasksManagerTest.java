@@ -10,22 +10,21 @@ import main.tasks.Task;
 import main.tasks.TaskStatus;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws IOException, InterruptedException {
         super.beforeEach();
         taskManager = new FileBackedTasksManager(new File("src/resources/testTasks.csv").toPath());
     }
 
     @AfterEach
     void afterEach() {
-        taskManager.deleteAllTasks();
-        taskManager.deleteAllEpics();
-        taskManager.deleteAllSubtasks();
+       super.afterEach();
     }
 
     @Test

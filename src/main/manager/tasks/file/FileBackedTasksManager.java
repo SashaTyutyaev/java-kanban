@@ -24,7 +24,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.path = path;
     }
 
-    public void save() {
+    protected void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(String.valueOf(path)))) {
             writer.append("id,type,name,status,description,epic,duration,startTime\n");
             for (Task task : getTasks()) {
@@ -217,5 +217,4 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println(fb2.getSubtasks());
         System.out.println(fb2.getHistory());
     }
-
 }

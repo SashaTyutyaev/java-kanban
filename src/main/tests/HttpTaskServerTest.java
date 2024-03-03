@@ -2,6 +2,7 @@ package main.tests;
 
 import com.google.gson.Gson;
 import main.manager.Managers;
+import main.manager.tasks.TaskManager;
 import main.server.HttpTaskServer;
 import main.server.KVServer;
 import main.tasks.Epic;
@@ -29,26 +30,24 @@ class HttpTaskServerTest {
     private KVServer kvServer;
     private HttpClient client;
     private Gson gson;
+    private TaskManager taskManager;
 
 
     @BeforeEach
     void beforeEach() throws IOException, InterruptedException {
-        taskServer = new HttpTaskServer();
         kvServer = new KVServer();
-        taskServer.start();
         kvServer.start();
+        taskServer = new HttpTaskServer();
+        taskServer.start();
         client = HttpClient.newHttpClient();
         gson = Managers.getGson();
-
+        taskManager = Managers.getDefault();
     }
 
     @AfterEach
     void afterEach() {
         taskServer.stop();
         kvServer.stop();
-        taskServer.getTaskManager().deleteAllTasks();
-        taskServer.getTaskManager().deleteAllSubtasks();
-        taskServer.getTaskManager().deleteAllEpics();
     }
 
     @Test
@@ -296,7 +295,7 @@ class HttpTaskServerTest {
 
         HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
-        String tasks = gson.toJson(taskServer.getTaskManager().getTasks());
+        String tasks = gson.toJson(taskManager.getTasks());
 
         assertEquals(200, getResponse.statusCode());
         assertEquals(tasks, getResponse.body());
@@ -390,7 +389,7 @@ class HttpTaskServerTest {
 
         HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
-        String tasks = gson.toJson(taskServer.getTaskManager().getEpics());
+        String tasks = gson.toJson(taskManager.getEpics());
 
         assertEquals(200, getResponse.statusCode());
         assertEquals(tasks, getResponse.body());
@@ -438,7 +437,7 @@ class HttpTaskServerTest {
 
         HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
-        String expectedEpic = gson.toJson(taskServer.getTaskManager().getEpic(epic.getId()));
+        String expectedEpic = gson.toJson(taskManager.getEpic(epic.getId()));
 
         assertEquals(200, getResponse.statusCode());
         assertEquals(expectedEpic, getResponse.body());
@@ -500,7 +499,7 @@ class HttpTaskServerTest {
 
         HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
-        String subtasks = gson.toJson(taskServer.getTaskManager().getSubtasks());
+        String subtasks = gson.toJson(taskManager.getSubtasks());
 
         assertEquals(200, getResponse.statusCode());
         assertEquals(subtasks, getResponse.body());
@@ -564,7 +563,7 @@ class HttpTaskServerTest {
 
         HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
-        String subtaskJson = gson.toJson(taskServer.getTaskManager().getSubtask(subtask2.getId()));
+        String subtaskJson = gson.toJson(taskManager.getSubtask(subtask2.getId()));
 
         assertEquals(200, getResponse.statusCode());
         assertEquals(subtaskJson, getResponse.body());
@@ -628,7 +627,7 @@ class HttpTaskServerTest {
 
         HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
-        String subtaskJson = gson.toJson(taskServer.getTaskManager().getEpicSubtasks(epic.getId()));
+        String subtaskJson = gson.toJson(taskManager.getEpicSubtasks(epic.getId()));
 
         assertEquals(200, getResponse.statusCode());
         assertEquals(subtaskJson, getResponse.body());
@@ -676,7 +675,7 @@ class HttpTaskServerTest {
 
 
         assertEquals(200, getResponse.statusCode());
-        assertEquals(0, taskServer.getTaskManager().getTasks().size());
+        assertEquals(0, taskManager.getTasks().size());
 
     }
 
@@ -718,15 +717,13 @@ class HttpTaskServerTest {
         final HttpRequest getRequest = HttpRequest.newBuilder()
                 .DELETE()
                 .uri(uri)
-                .version(HttpClient.Version.HTTP_1_1)
-                .header("Content-Type", "application/json")
                 .build();
 
         HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
 
         assertEquals(200, getResponse.statusCode());
-        assertFalse(taskServer.getTaskManager().getTasks().contains(task2));
+        assertFalse(taskManager.getTasks().contains(task2));
     }
 
     @Test
@@ -771,7 +768,7 @@ class HttpTaskServerTest {
 
 
         assertEquals(200, getResponse.statusCode());
-        assertEquals(0, taskServer.getTaskManager().getEpics().size());
+        assertEquals(0, taskManager.getEpics().size());
     }
 
     @Test
@@ -818,7 +815,7 @@ class HttpTaskServerTest {
 
 
         assertEquals(200, getResponse.statusCode());
-        assertFalse(taskServer.getTaskManager().getEpics().contains(epic));
+        assertFalse(taskManager.getEpics().contains(epic));
     }
 
     @Test
@@ -879,7 +876,7 @@ class HttpTaskServerTest {
 
 
         assertEquals(200, getResponse.statusCode());
-        assertEquals(0, taskServer.getTaskManager().getSubtasks().size());
+        assertEquals(0, taskManager.getSubtasks().size());
     }
 
     @Test
@@ -942,7 +939,7 @@ class HttpTaskServerTest {
 
 
         assertEquals(200, getResponse.statusCode());
-        assertFalse(taskServer.getTaskManager().getSubtasks().contains(subtask2));
+        assertFalse(taskManager.getSubtasks().contains(subtask2));
     }
 
     @Test
@@ -1005,7 +1002,7 @@ class HttpTaskServerTest {
 
 
         assertEquals(200, getResponse.statusCode());
-        assertEquals(0, taskServer.getTaskManager().getEpic(epic.getId()).getSubtaskId().size());
+        assertEquals(0, taskManager.getEpic(epic.getId()).getSubtaskId().size());
     }
 
 

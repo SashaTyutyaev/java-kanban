@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import main.adapters.LocalDateTimeAdapter;
 import main.manager.history.HistoryManager;
 import main.manager.history.InMemoryHistoryManager;
+import main.manager.tasks.http.HttpTaskManager;
 import main.manager.tasks.TaskManager;
 import main.manager.tasks.file.FileBackedTasksManager;
 

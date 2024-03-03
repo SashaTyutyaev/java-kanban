@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     private Epic testEpic;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws InterruptedException, IOException {
         task = new Task("taskName", "taskDescription", NEW, 30, LocalDateTime.of(2024, 1, 1, 1, 1));
         epic = new Epic("epicName", "epicDescription", NEW);
         epicWithNewAndDoneSub = new Epic("EpicName", "EpicDescription", NEW);
@@ -42,8 +43,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.deleteAllEpics();
         taskManager.deleteAllTasks();
         taskManager.deleteAllSubtasks();
-
-
+        taskManager.getHistory().clear();
     }
     @Test
     void getHistory() {
